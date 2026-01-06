@@ -1,0 +1,22 @@
+Status: PASSED
+
+Validation:
+- Successfully solved N-Queens for board sizes up to 15
+- Verified correct solution count (2,279,184) for size 15
+- Kernel execution successful on GPU
+
+Working Configurations:
+- Board sizes: 6-15
+- Maximum working depth: 6
+- Largest successful test: 15x6 (2,279,184 solutions)
+
+Performance:
+- Size 15, depth 6: 0.291s kernel time
+- Size 14, depth 6: 0.047s kernel time
+- Size 13, depth 6: 0.009s kernel time
+
+Limitations:
+- Initial depth must be ≤ 6 for stability
+- Depth 7 causes segmentation fault
+
+Date: Sun Mar 23 08:45:53 PM CDT 2025

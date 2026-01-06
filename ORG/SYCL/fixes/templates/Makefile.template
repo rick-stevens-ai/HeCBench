@@ -1,0 +1,30 @@
+# Compiler settings
+CXX = icpx
+CXXFLAGS = -fsycl -std=c++17 -O3
+
+# Debug flags
+DEBUGFLAGS = -g -O0 -DDEBUG
+
+# Include paths
+INCLUDES = -I$(ONEAPI_ROOT)/compiler/latest/include
+
+# Source files
+SRC = main.cpp
+TARGET = app
+
+# Default target
+all: $(TARGET)
+
+# Main build rule
+$(TARGET): $(SRC)
+    $(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $<
+
+# Debug build
+debug: CXXFLAGS += $(DEBUGFLAGS)
+debug: $(TARGET)
+
+# Clean rule
+clean:
+    rm -f $(TARGET)
+
+.PHONY: all debug clean

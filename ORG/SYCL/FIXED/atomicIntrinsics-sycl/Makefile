@@ -1,0 +1,67 @@
+#===============================================================================
+# User Options
+#===============================================================================
+
+# Compiler can be set below, or via environment variable
+CC        = icpx
+OPTIMIZE  = yes
+DEBUG     = no
+LAUNCHER  =
+
+GPU       = yes
+INTEL_GPU = yes
+
+#===============================================================================
+# Program name & source code list
+#===============================================================================
+
+program = main
+
+source = main.cpp
+
+obj = $(source:.cpp=.o)
+
+#===============================================================================
+# Sets Flags
+#===============================================================================
+
+# Standard Flags
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -fsycl
+
+# Linker Flags
+LDFLAGS = 
+
+# Debug Flags
+ifeq ($(DEBUG),yes)
+	CFLAGS  += -g -DDEBUG
+	LDFLAGS += -g
+endif
+
+# Optimization Flags
+ifeq ($(OPTIMIZE),yes)
+	CFLAGS += -O3
+endif
+
+ifeq ($(INTEL_GPU), yes)
+	CFLAGS += -fsycl-targets=spir64_gen -Xsycl-target-backend "-device acm-g10"
+endif
+
+ifeq ($(GPU),yes)
+	CFLAGS += -DUSE_GPU
+endif
+
+#===============================================================================
+# Targets to Build
+#===============================================================================
+
+$(program): $(obj)
+	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
+
+%.o: %.cpp reference.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -rf $(program) $(obj)
+
+run: $(program)
+	$(LAUNCHER) ./$(program) 100
