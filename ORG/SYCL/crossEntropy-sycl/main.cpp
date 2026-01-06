@@ -144,7 +144,7 @@ void loss_bwd_cpu(scalar_t* predict, int64_t* target, scalar_t* weight, int64_t*
     for (int k = 0; k < W; ++k) {
       for (int j = 0; j < H; ++j) {
         int64_t offset = i * W * H + k * H + j;
-        grad_predict[offset] = grad_predict[offset] - std::expf(predict[offset]) * sum_value[i][j];
+        grad_predict[offset] = grad_predict[offset] - expf(predict[offset]) * sum_value[i][j];
       }
     }
   }

@@ -75,11 +75,11 @@ $(program): $(obj)
 main.o: main.cpp computeQ.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-file.o: ../mriQ-cuda/file.cc ../mriQ-cuda/file.h  
+file.o: file.cc file.h  
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(program) $(obj) output*
 
 run: $(program)
-	$(LAUNCHER) ./$(program) ../mriQ-cuda/datasets/128x128x128/input/128x128x128.bin output_128
+	$(LAUNCHER) ./$(program) datasets/128x128x128/input/128x128x128.bin output_128

@@ -197,18 +197,18 @@ inline void macroscopic(float *f, float* rho, u_type* u0, u_type* u1, u_type* u2
   float Z_M1 = f[ 3] + f[ 6] + f[ 8] + f[16] + f[18];
   float Z_P1 = f[ 7] + f[ 9] + f[12] + f[15] + f[17];
   *rho = X_M1 + X_P1 + X_0;
-  float one_over_rho = 1./ *rho;
+  float one_over_rho = 1.0f/ *rho;
   *u0 = (X_P1 - X_M1)* one_over_rho;
   *u1 = (Y_P1 - Y_M1)* one_over_rho;
   *u2 = (Z_P1 - Z_M1)* one_over_rho;
 }
 
-#define EQUILIBRIUM(rho, t, cu, usqr)  rho*(t)*(1 + (cu) + ((cu)*(cu))/2. - (usqr))
+#define EQUILIBRIUM(rho, t, cu, usqr)  rho*(t)*(1 + (cu) + ((cu)*(cu))/2.0f - (usqr))
 // Computes the second-order BGK equilibrium.
 
 inline void d_equilibrium(float* fin, float rho, const float u0, const float u1, const float u2)
 {
-  float usqr = 3*(u0*u0 + u1*u1 + u2*u2)/2.;
+  float usqr = 3*(u0*u0 + u1*u1 + u2*u2)/2.0f;
   float cu;
   rho /= 36;
   fin[0 ] = EQUILIBRIUM(rho, 12, 0 , usqr);
@@ -403,62 +403,62 @@ inline void streaming_wall2(
   u_type u)
 {
   u_type u0 = u;
-  u_type u1 = 0.;
-  u_type u2 = 0.;
+  u_type u1 = 0.0f;
+  u_type u2 = 0.0f;
 
   if  ( 0 || dir == 1){
-    fin[1 ] +=  2*1./18*3*( - u0          );
+    fin[1 ] +=  2*1.0f/18*3*( - u0          );
   }
   if  ( 0 || dir == 3){
-    fin[2 ] +=  2*1./18*3*(      - u1     );
+    fin[2 ] +=  2*1.0f/18*3*(      - u1     );
   }
   if  ( 0 || dir == 5){
-    fin[3 ] +=  2*1./18*3*(           - u2);
+    fin[3 ] +=  2*1.0f/18*3*(           - u2);
   }
   if  ( 0 || dir == 1|| dir == 3){
-    fin[4 ] +=  2*1./36*3*( - u0 - u1     );
+    fin[4 ] +=  2*1.0f/36*3*( - u0 - u1     );
   }
   if  ( 0 || dir == 1|| dir == 2){
-    fin[5 ] +=  2*1./36*3*( - u0 + u1     );
+    fin[5 ] +=  2*1.0f/36*3*( - u0 + u1     );
   }
   if  ( 0 || dir == 1|| dir == 5){
-    fin[6 ] +=  2*1./36*3*( - u0      - u2);
+    fin[6 ] +=  2*1.0f/36*3*( - u0      - u2);
   }
   if  ( 0 || dir == 1|| dir == 4){
-    fin[7 ] +=  2*1./36*3*( - u0      + u2);
+    fin[7 ] +=  2*1.0f/36*3*( - u0      + u2);
   }
   if  ( 0 || dir == 3|| dir == 5){
-    fin[8 ] +=  2*1./36*3*(      - u1 - u2);
+    fin[8 ] +=  2*1.0f/36*3*(      - u1 - u2);
   }
   if  ( 0 || dir == 3|| dir == 4){
-    fin[9 ] +=  2*1./36*3*(      - u1 + u2);
+    fin[9 ] +=  2*1.0f/36*3*(      - u1 + u2);
   }
   if  ( 0 || dir == 0){
-    fin[10] +=  2*1./18*3*(   u0          );
+    fin[10] +=  2*1.0f/18*3*(   u0          );
   }
   if  ( 0 || dir == 2){
-    fin[11] +=  2*1./18*3*(      + u1     );
+    fin[11] +=  2*1.0f/18*3*(      + u1     );
   }
   if  ( 0 || dir == 4){
-    fin[12] +=  2*1./18*3*(           + u2);
+    fin[12] +=  2*1.0f/18*3*(           + u2);
   }
   if  ( 0 || dir == 0|| dir == 2){
-    fin[13] +=  2*1./36*3*(   u0 + u1     );
+    fin[13] +=  2*1.0f/36*3*(   u0 + u1     );
   }
   if  ( 0 || dir == 0|| dir == 3){
-    fin[14] +=  2*1./36*3*(   u0 - u1     );
+    fin[14] +=  2*1.0f/36*3*(   u0 - u1     );
   }
   if  ( 0 || dir == 0|| dir == 4){
-    fin[15] +=  2*1./36*3*(   u0      + u2);
+    fin[15] +=  2*1.0f/36*3*(   u0      + u2);
   }
   if  ( 0 || dir == 0|| dir == 5){
-    fin[16] +=  2*1./36*3*(   u0      - u2);
+    fin[16] +=  2*1.0f/36*3*(   u0      - u2);
   }
   if  ( 0 || dir == 2|| dir == 4){
-    fin[17] +=  2*1./36*3*(      + u1 + u2);
+    fin[17] +=  2*1.0f/36*3*(      + u1 + u2);
   }
   if  ( 0 || dir == 2|| dir == 5){
-    fin[18] +=  2*1./36*3*(      + u1 - u2);
+    fin[18] +=  2*1.0f/36*3*(      + u1 - u2);
   }
 }
 
@@ -514,7 +514,7 @@ void collide_and_stream_g(
           d_equilibrium(feq, rho, u0, u1, u2);
           // BGK collision model.
           for (int i = 0; i < nb_directions; ++i){
-            finl[i] = (1.-omega)*finl[i] +omega*feq[i];
+            finl[i] = (1.0f-omega)*finl[i] +omega*feq[i];
           }
         }
 

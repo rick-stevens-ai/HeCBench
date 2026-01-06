@@ -72,19 +72,19 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-main.o: main.cpp kernel.h ../tqs-cuda/support/task.h \
-                   ../tqs-cuda/support/setup.h \
-                   ../tqs-cuda/support/verify.h
+main.o: main.cpp kernel.h support/task.h \
+                   support/setup.h \
+                   support/verify.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 kernel.o: kernel.cpp kernel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-host_task.o: host_task.cpp kernel.h ../tqs-cuda/support/task.h
+host_task.o: host_task.cpp kernel.h support/task.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(program) $(obj)
 
 run: $(program)
-	$(LAUNCHER) ./$(program) -f ../tqs-cuda/input/patternsNP100NB512FB25.txt
+	$(LAUNCHER) ./$(program) -f input/patternsNP100NB512FB25.txt

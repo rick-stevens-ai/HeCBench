@@ -31,7 +31,7 @@ obj=basis.o scf.o main.o crys.o cints.o
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -I../xlqc-cuda -I../xlqc-cuda/int_lib $(GSL_INC) \
+CFLAGS := $(EXTRA_CFLAGS) -I../xlqc-cuda -Iint_lib $(GSL_INC) \
           --gcc-toolchain=$(GCC_TOOLCHAIN) \
           -std=c++17 -Wall -fsycl
 
@@ -77,16 +77,16 @@ $(program): $(obj)
 main.o: main.cpp cuda_rys_sp.cpp cuda_rys_dp.cpp rys.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-scf.o: ../xlqc-cuda/scf.cc
+scf.o: scf.cc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-basis.o: ../xlqc-cuda/basis.cc
+basis.o: basis.cc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-crys.o: ../xlqc-cuda/int_lib/crys.cc
+crys.o: int_lib/crys.cc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-cints.o: ../xlqc-cuda/int_lib/cints.cc
+cints.o: int_lib/cints.cc
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 clean:

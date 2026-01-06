@@ -58,14 +58,14 @@ inline int ConvertSMVer2Cores(int major, int minor)
 	} sSMtoCores;
 
 	sSMtoCores nGpuArchCoresPerSM[] = 
-	{ { 0x10,  8 }, // Tesla Generation (SM 1.0) G80 class
-	  { 0x11,  8 }, // Tesla Generation (SM 1.1) G8x class
-	  { 0x12,  8 }, // Tesla Generation (SM 1.2) G9x class
-	  { 0x13,  8 }, // Tesla Generation (SM 1.3) GT200 class
-	  { 0x20, 32 }, // Fermi Generation (SM 2.0) GF100 class
-	  { 0x21, 48 }, // Fermi Generation (SM 2.1) GF10x class
-	  { 0x30, 192}, // Kepler Generation (SM 3.0) GK10x class
-	  { 0x35, 192}, // Kepler Generation (SM 3.5) GK11x class
+	{ { 0x10,  8 }, // Tesla Generation (SM 1.0f) G80 class
+	  { 0x11,  8 }, // Tesla Generation (SM 1.1f) G8x class
+	  { 0x12,  8 }, // Tesla Generation (SM 1.2f) G9x class
+	  { 0x13,  8 }, // Tesla Generation (SM 1.3f) GT200 class
+	  { 0x20, 32 }, // Fermi Generation (SM 2.0f) GF100 class
+	  { 0x21, 48 }, // Fermi Generation (SM 2.1f) GF10x class
+	  { 0x30, 192}, // Kepler Generation (SM 3.0f) GK10x class
+	  { 0x35, 192}, // Kepler Generation (SM 3.5f) GK11x class
 	  {   -1, -1 }
 	};
 
@@ -160,7 +160,7 @@ extern "C" void shrFree(void* ptr);
 //!          ALL printf flags, width, precision and type specifiers are supported with this exception: 
 //!              Wide char type specifiers intended for wprintf (%S and %C) are NOT supported
 //!              Single byte char type specifiers (%s and %c) ARE supported 
-//! @param 4... variable args: like printf or fprintf.  Must match format specifer type above.  
+//! @param 4.0f.. variable args: like printf or fprintf.  Must match format specifer type above.  
 //! @return 0 if OK, negative value on error or if error occurs or was passed in. 
 // *********************************************************************
 extern "C" int shrLogEx(int iLogMode, int iErrNum, const char* cFormatString, ...);
@@ -175,7 +175,7 @@ extern "C" int shrLog(const char* cFormatString, ...);
 //! Example: float dElapsedTime = shrDeltaTime(0);
 //! 
 //! @param 0 iCounterID: Which timer to check/reset. (0, 1, 2)
-//! @return delta time of specified counter since last call in seconds.  Otherwise -9999.0 if error
+//! @return delta time of specified counter since last call in seconds.  Otherwise -9999.0f if error
 // *********************************************************************
 extern "C" float shrDeltaT(int iCounterID);
 

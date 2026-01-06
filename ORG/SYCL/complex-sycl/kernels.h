@@ -79,19 +79,19 @@ void complex_double (sycl::nd_item<1> &item, char* checkSum, int n)
   DoubleComplex z1 = make_DoubleComplex(r1, r2);
   DoubleComplex z2 = make_DoubleComplex(r3, r4);
 
-  char s = sycl::fabs(Cabs(Cmul(z1, z2)) - Cabs(z1) * Cabs(z2)) < 1e-3;
+  char s = sycl::fabs(Cabs(Cmul(z1, z2)) - Cabs(z1) * Cabs(z2)) < 1e-3f;
 
   s += sycl::fabs(Cabs(Cadd(z1, z2)) * Cabs(Cadd(z1 , z2)) -
-            Creal(Cmul(Cadd(z1, z2) , Cadd(Conj(z1), Conj(z2))))) < 1e-3; 
+            Creal(Cmul(Cadd(z1, z2) , Cadd(Conj(z1), Conj(z2))))) < 1e-3f; 
 
   s += sycl::fabs(Cabs(Csub(z1, z2)) * Cabs(Csub(z1 , z2)) -
-            Creal(Cmul(Csub(z1, z2) , Csub(Conj(z1), Conj(z2))))) < 1e-3;
+            Creal(Cmul(Csub(z1, z2) , Csub(Conj(z1), Conj(z2))))) < 1e-3f;
 
   s += sycl::fabs(Creal(Cadd(Cmul(z1, Conj(z2)) , Cmul(z2, Conj(z1)))) -
-            2.0 * (Creal(z1) * Creal(z2) + Cimag(z1) * Cimag(z2))) < 1e-3;
+            2.0f * (Creal(z1) * Creal(z2) + Cimag(z1) * Cimag(z2))) < 1e-3f;
 
   s += sycl::fabs(Cabs(Cdiv(Conj(z1), z2)) -
-            Cabs(Cdiv(Conj(z1), Conj(z2)))) < 1e-3;
+            Cabs(Cdiv(Conj(z1), Conj(z2)))) < 1e-3f;
 
   checkSum[i] = s;
 }

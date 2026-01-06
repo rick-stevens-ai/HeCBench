@@ -42,9 +42,9 @@
 
 #define MAX_W 16
 
-#define EPSILON 1e-13
+#define EPSILON 1e-13f
 
-#define FACTOR 1e6
+#define FACTOR 1e6f
 
 #define NTHREADS 128
 

@@ -128,13 +128,13 @@ float run_benchmark(sycl::queue &q, BoxCU &domain, lbm_vars h_vars, lbm_vars d_v
   const int bench_max_iter = 2000;
   const int output_frame = 2000;
 
-  const float ulb = 0.02;
-  const float dx = 1. / (N - 2.);
+  const float ulb = 0.02f;
+  const float dx = 1.0f / (N - 2.0f);
   const float dt = dx * ulb;
 
-  const float Re = 100.;
-  const float nu = ulb * (N - 2.) / Re;
-  const float omega = 1. / (3. * nu + 0.5);
+  const float Re = 100.0f;
+  const float nu = ulb * (N - 2.0f) / Re;
+  const float omega = 1.0f / (3.0f * nu + 0.5f);
 
   printf("omega = %f\n", omega);
 
@@ -146,7 +146,7 @@ float run_benchmark(sycl::queue &q, BoxCU &domain, lbm_vars h_vars, lbm_vars d_v
         sycl::nd_range<3>(sycl::range<3>(domain.nz, domain.ny, domain.nx),
                           sycl::range<3>(1, 1, domain.nx)),
       [=](sycl::nd_item<3> item) {
-        init_velocity_g<D3Q19>(d_vars, domain, domain, domain.nz, 0, 0, 0, 1., item);
+        init_velocity_g<D3Q19>(d_vars, domain, domain, domain.nz, 0, 0, 0, 1.0f, item);
     });
   });
 
@@ -205,14 +205,14 @@ float run_benchmark(sycl::queue &q, BoxCU &domain, lbm_vars h_vars, lbm_vars d_v
           }
         }
       }
-      energy *= 0.5;
+      energy *= 0.5f;
 
       printf("energy %f iteration %d \n", energy*dx*dx/(dt*dt), iter);
 
       if (iter == 149 && N == 102) {
         printf("Regression test at iteration %d: Average energy LU = %f", iter, energy);
-        const float reference_energy = 2.09868507623;
-        if (fabsf(energy - reference_energy) < 1.e-7) {
+        const float reference_energy = 2.09868507623f;
+        if (fabsf(energy - reference_energy) < 1.e-7f) {
           printf(": OK\n");
         }
         else {
@@ -223,7 +223,7 @@ float run_benchmark(sycl::queue &q, BoxCU &domain, lbm_vars h_vars, lbm_vars d_v
   }
   end = std::chrono::steady_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-  float mlups = ((float)nl*(float)num_bench_iter / (elapsed * 1e-9f)) / 1.e6;
+  float mlups = ((float)nl*(float)num_bench_iter / (elapsed * 1e-9f)) / 1.e6f;
   return mlups;
 }
 

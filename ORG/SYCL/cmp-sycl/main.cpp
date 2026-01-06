@@ -97,7 +97,7 @@ compute_semblances(sycl::nd_item<1> &item,
     for(int j=0; j < _w; j++) _num[j] = 0.0f;
 
     for(int t_id=t_id0; t_id < t_idf; t_id++) {
-      real t = sycl::sqrtf(_t0 + _c * h[t_id]) * _idt;
+      real t = sycl::sqrt(_t0 + _c * h[t_id]) * _idt;
 
       int it = (int)( t );
       int ittau = it - _tau;

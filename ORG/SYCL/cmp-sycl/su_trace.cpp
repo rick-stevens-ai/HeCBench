@@ -68,21 +68,21 @@ void su_trace::fputtr(std::ofstream& file) {
 ////////////////////////////////////////////////////////////////////////////////
 
 float su_trace::halfoffset() {
-  float hx = (float)(this->_gx - this->_sx) * 0.5;
-  float hy = (float)(this->_gy - this->_sy) * 0.5;
-  return std::sqrtf(hx * hx + hy * hy);
+  float hx = (float)(this->_gx - this->_sx) * 0.5f;
+  float hy = (float)(this->_gy - this->_sy) * 0.5f;
+  return sqrtf(hx * hx + hy * hy);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 float su_trace::halfoffset_x() {
-  return this->fscalco() * (this->_gx - this->_sx) * 0.5;
+  return this->fscalco() * (this->_gx - this->_sx) * 0.5f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 float su_trace::halfoffset_y() {
-  return this->fscalco() * (this->_gy - this->_sy) * 0.5;
+  return this->fscalco() * (this->_gy - this->_sy) * 0.5f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

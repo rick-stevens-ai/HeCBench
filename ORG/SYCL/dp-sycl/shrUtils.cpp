@@ -80,15 +80,15 @@ float shrDeltaT(int iCounterID = 0)
 
 		    if (iCounterID >= 0 && iCounterID <= 2) 
 		    {
-			    // Calculate time difference for timer 0.  (zero when called the first time) 
-			    DeltaT = liOldCount[iCounterID].LowPart ? (((float)liNewCount.QuadPart - (float)liOldCount[iCounterID].QuadPart) / (float)liFreq.QuadPart) : 0.0;
+			    // Calculate time difference for timer 0.0f  (zero when called the first time) 
+			    DeltaT = liOldCount[iCounterID].LowPart ? (((float)liNewCount.QuadPart - (float)liOldCount[iCounterID].QuadPart) / (float)liFreq.QuadPart) : 0.0f;
 			    // Reset old count to new
 			    liOldCount[iCounterID] = liNewCount;
 			}
 			else 
 			{
 		        // Requested counter ID out of range
-		        DeltaT = -9999.0;
+		        DeltaT = -9999.0f;
 			}
 			
 		    // Returns time difference in seconds sunce the last call
@@ -97,7 +97,7 @@ float shrDeltaT(int iCounterID = 0)
 	    else
 	    {
 		    // No high resolution performance counter
-		    return -9999.0;
+		    return -9999.0f;
 	    }
     #elif defined(UNIX) // Linux version of precision host timer. See http://www.informit.com/articles/article.aspx?p=23618&seqNum=8
         static struct timeval _NewTime;  // new wall clock time (struct representation in seconds and microseconds)
@@ -109,7 +109,7 @@ float shrDeltaT(int iCounterID = 0)
 		if (iCounterID >= 0 && iCounterID <= 2) 
 		{
 		    // Calculate time difference for timer (iCounterID).  (zero when called the first time) 
-		    DeltaT =  ((float)_NewTime.tv_sec + 1.0e-6 * (float)_NewTime.tv_usec) - ((float)_OldTime[iCounterID].tv_sec + 1.0e-6 * (float)_OldTime[iCounterID].tv_usec);
+		    DeltaT =  ((float)_NewTime.tv_sec + 1.0fe-6 * (float)_NewTime.tv_usec) - ((float)_OldTime[iCounterID].tv_sec + 1.0fe-6 * (float)_OldTime[iCounterID].tv_usec);
 		    // Reset old timer (iCounterID) to new timer
 		    _OldTime[iCounterID].tv_sec  = _NewTime.tv_sec;
 		    _OldTime[iCounterID].tv_usec = _NewTime.tv_usec;
@@ -117,7 +117,7 @@ float shrDeltaT(int iCounterID = 0)
 		else 
 		{
 	        // Requested counterID is out of rangewith respect to available counters
-	        DeltaT = -9999.0;
+	        DeltaT = -9999.0f;
 		}
 
 	    // Returns time difference in seconds sunce the last call
@@ -141,7 +141,7 @@ float shrDeltaT(int iCounterID = 0)
 		else 
 		{
 	        // Requested counter ID out of range
-	        DeltaT = -9999.0;
+	        DeltaT = -9999.0f;
 		}
         return DeltaT;
         #else
@@ -303,7 +303,7 @@ static int shrLogV(int iLogMode, int iErrNum, const char* cFormatString, va_list
     float          dArg;
     unsigned int    uiArg;
     std::string sFormatSpec;
-    const std::string sFormatChars = " -+#0123456789.dioufnpcsXxEeGgAa";
+    const std::string sFormatChars = " -+#0123456789.0fdioufnpcsXxEeGgAa";
     const std::string sTypeChars = "dioufnpcsXxEeGgAa";
     char cType = 'c';
 
@@ -1429,7 +1429,7 @@ compareDataAsFloatThreshold( const T* reference, const T* data, const unsigned i
 shrBOOL shrComparef( const float* reference, const float* data,
             const unsigned int len ) 
 {
-    const float epsilon = 0.0;
+    const float epsilon = 0.0f;
     return compareData( reference, data, len, epsilon, 0.0f );
 }
 
@@ -1554,7 +1554,7 @@ shrBOOL shrCompareL2fe( const float* reference, const float* data,
     }
 
     float normRef = sqrtf(ref);
-    if (fabsf(ref) < 1e-7) {
+    if (fabsf(ref) < 1e-7f) {
 #ifdef _DEBUG
         std::cerr << "ERROR, reference l2-norm is 0\n";
 #endif

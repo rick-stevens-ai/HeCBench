@@ -129,7 +129,7 @@ void dot (const size_t iNumElements, const int iNumIterations)
 
   for (int i = 0; i < iNumIterations; i++) {
     dst = std::transform_reduce(oneapi::dpl::execution::make_device_policy(q),
-                                d_srcA, d_srcA + iNumElements, d_srcB, .0);
+                                d_srcA, d_srcA + iNumElements, d_srcB, T(0));
   }
 
   end = std::chrono::steady_clock::now();

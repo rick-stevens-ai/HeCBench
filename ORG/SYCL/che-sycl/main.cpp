@@ -41,9 +41,9 @@ float Laplacian(const float c[][DATAYSIZE][DATAXSIZE],
   if (yn < 0)  yn = ny;
   if (zn < 0)  zn = nz;
 
-  float cxx = (c[z][y][xp] + c[z][y][xn] - 2.0*c[z][y][x]) / (dx*dx);
-  float cyy = (c[z][yp][x] + c[z][yn][x] - 2.0*c[z][y][x]) / (dy*dy);
-  float czz = (c[zp][y][x] + c[zn][y][x] - 2.0*c[z][y][x]) / (dz*dz);
+  float cxx = (c[z][y][xp] + c[z][y][xn] - 2.0f*c[z][y][x]) / (dx*dx);
+  float cyy = (c[z][yp][x] + c[z][yn][x] - 2.0f*c[z][y][x]) / (dy*dy);
+  float czz = (c[zp][y][x] + c[zn][y][x] - 2.0f*c[z][y][x]) / (dz*dz);
 
   return cxx + cyy + czz;
 }
@@ -58,7 +58,7 @@ float GradientX(const float phi[][DATAYSIZE][DATAXSIZE],
   if (xp > nx) xp = 0;
   if (xn < 0)  xn = nx;
 
-  return (phi[z][y][xp] - phi[z][y][xn]) / (2.0*dx);
+  return (phi[z][y][xp] - phi[z][y][xn]) / (2.0f*dx);
 }
 
 float GradientY(const float phi[][DATAYSIZE][DATAXSIZE], 
@@ -71,7 +71,7 @@ float GradientY(const float phi[][DATAYSIZE][DATAXSIZE],
   if (yp > ny) yp = 0;
   if (yn < 0)  yn = ny;
 
-  return (phi[z][yp][x] - phi[z][yn][x]) / (2.0*dy);
+  return (phi[z][yp][x] - phi[z][yn][x]) / (2.0f*dy);
 }
 
 float GradientZ(const float phi[][DATAYSIZE][DATAXSIZE],
@@ -84,7 +84,7 @@ float GradientZ(const float phi[][DATAYSIZE][DATAXSIZE],
   if (zp > nz) zp = 0;
   if (zn < 0)  zn = nz;
 
-  return (phi[zp][y][x] - phi[zn][y][x]) / (2.0*dz);
+  return (phi[zp][y][x] - phi[zn][y][x]) / (2.0f*dz);
 }
 
 void chemicalPotential(
@@ -105,17 +105,17 @@ void chemicalPotential(
 
   if ((idx < DATAXSIZE) && (idy < DATAYSIZE) && (idz < DATAZSIZE)) {
 
-    mu[idz][idy][idx] = 4.5 * ( ( c[idz][idy][idx] + 1.0 ) * e_AA + 
-        ( c[idz][idy][idx] - 1 ) * e_BB - 2.0 * c[idz][idy][idx] * e_AB ) + 
-      3.0 * c[idz][idy][idx] + c[idz][idy][idx] * c[idz][idy][idx] * c[idz][idy][idx] - 
+    mu[idz][idy][idx] = 4.5f * ( ( c[idz][idy][idx] + 1.0f ) * e_AA + 
+        ( c[idz][idy][idx] - 1 ) * e_BB - 2.0f * c[idz][idy][idx] * e_AB ) + 
+      3.0f * c[idz][idy][idx] + c[idz][idy][idx] * c[idz][idy][idx] * c[idz][idy][idx] - 
       gamma * Laplacian(c,dx,dy,dz,idx,idy,idz);
   }
 }
 
 float freeEnergy(float c, float e_AA, float e_BB, float e_AB)
 {
-  return (((9.0 / 4.0) * ((c*c+2.0*c+1.0)*e_AA+(c*c-2.0*c+1.0)*e_BB+
-          2.0*(1.0-c*c)*e_AB)) + ((3.0/2.0) * c * c) + ((3.0/12.0) * c * c * c * c));
+  return (((9.0f / 4.0f) * ((c*c+2.0f*c+1.0f)*e_AA+(c*c-2.0f*c+1.0f)*e_BB+
+          2.0f*(1.0f-c*c)*e_AB)) + ((3.0f/2.0f) * c * c) + ((3.0f/12.0f) * c * c * c * c));
 }
 
 void localFreeEnergyFunctional(
@@ -136,7 +136,7 @@ void localFreeEnergyFunctional(
 
   if ((idx < DATAXSIZE) && (idy < DATAYSIZE) && (idz < DATAZSIZE)) {
 
-    f[idz][idy][idx] = freeEnergy(c[idz][idy][idx],e_AA,e_BB,e_AB) + (gamma / 2.0) * (
+    f[idz][idy][idx] = freeEnergy(c[idz][idy][idx],e_AA,e_BB,e_AB) + (gamma / 2.0f) * (
         GradientX(c,dx,dy,dz,idx,idy,idz) * GradientX(c,dx,dy,dz,idx,idy,idz) + 
         GradientY(c,dx,dy,dz,idx,idy,idz) * GradientY(c,dx,dy,dz,idx,idy,idz) + 
         GradientZ(c,dx,dy,dz,idx,idy,idz) * GradientZ(c,dx,dy,dz,idx,idy,idz));
@@ -180,11 +180,11 @@ void Swap(sycl::nd_item<3> &item, float cnew[][DATAYSIZE][DATAXSIZE], float cold
 void initialization(float c[][DATAYSIZE][DATAXSIZE])
 {
   srand(2);
-  for (unsigned int idz = 0.0; idz < DATAZSIZE; idz++) {
-    for (unsigned int idy = 0.0; idy < DATAYSIZE; idy++) {
-      for (unsigned int idx = 0.0; idx < DATAXSIZE; idx++) {
+  for (unsigned int idz = 0.0f; idz < DATAZSIZE; idz++) {
+    for (unsigned int idy = 0.0f; idy < DATAYSIZE; idy++) {
+      for (unsigned int idx = 0.0f; idx < DATAXSIZE; idx++) {
         float f = (float)rand() / RAND_MAX;
-        c[idz][idy][idx] = -1.0 + 2.0*f;
+        c[idz][idy][idx] = -1.0f + 2.0f*f;
       }
     }
   }
@@ -192,7 +192,7 @@ void initialization(float c[][DATAYSIZE][DATAXSIZE])
 
 float integral(const float c[][DATAYSIZE][DATAXSIZE], int nx, int ny, int nz)
 {
-  float summation = 0.0;  
+  float summation = 0.0f;  
 
   for (int k = 0; k < nz; k++)
     for(int j = 0; j < ny; j++)
@@ -204,21 +204,21 @@ float integral(const float c[][DATAYSIZE][DATAXSIZE], int nx, int ny, int nz)
 
 int main(int argc, char *argv[])
 {
-  const float dx = 1.0;
-  const float dy = 1.0;
-  const float dz = 1.0;
-  const float dt = 0.01;
-  const float e_AA = -(2.0/9.0);
-  const float e_BB = -(2.0/9.0);
-  const float e_AB = (2.0/9.0);
+  const float dx = 1.0f;
+  const float dy = 1.0f;
+  const float dz = 1.0f;
+  const float dt = 0.01f;
+  const float e_AA = -(2.0f/9.0f);
+  const float e_BB = -(2.0f/9.0f);
+  const float e_AB = (2.0f/9.0f);
   const int t_f = atoi(argv[1]);    // default value: 25000
 #ifndef DEBUG
   const int t_freq = t_f; 
 #else
   const int t_freq = 10;
 #endif
-  const float gamma = 0.5;
-  const float D = 1.0;
+  const float gamma = 0.5f;
+  const float D = 1.0f;
 
   string name_c = "./out/integral_c.txt";
   ofstream ofile_c (name_c);
@@ -258,9 +258,9 @@ int main(int argc, char *argv[])
 
   initialization(c_host);
 
-  float integral_c = 0.0;
-  float integral_mu = 0.0;
-  float integral_f = 0.0;
+  float integral_c = 0.0f;
+  float integral_mu = 0.0f;
+  float integral_f = 0.0f;
 
 #ifdef USE_GPU
   sycl::queue q(sycl::gpu_selector_v, sycl::property::queue::in_order());

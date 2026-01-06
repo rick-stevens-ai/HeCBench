@@ -15,13 +15,17 @@ HIP       = no
 HIP_ARCH  = gfx908
 #GCC_TOOLCHAIN = "/auto/software/gcc/x86_64/gcc-9.1.0/"
 
+# Note: This benchmark requires PyTorch XPU headers and libraries
+# Set PYTORCH_PATH if PyTorch is installed in a non-standard location
+PYTORCH_PATH ?= /usr/local
+
 #===============================================================================
 # Program name & source code list
 #===============================================================================
 
 program = main
 
-source = cosine.cpp fresnel.cpp main.cpp sine.cpp xchebyshev.cpp
+source = src/timex.cpp src/timex_op.cpp
 
 obj = $(source:.cpp=.o)
 
@@ -30,7 +34,10 @@ obj = $(source:.cpp=.o)
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../../include -fsycl --gcc-toolchain=$(GCC_TOOLCHAIN)
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -fsycl \
+          -I$(PYTORCH_PATH)/include \
+          -I$(PYTORCH_PATH)/include/torch/csrc/api/include \
+          --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
     CFLAGS_TMP := $(CFLAGS)
@@ -38,7 +45,7 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = 
+LDFLAGS = -L$(PYTORCH_PATH)/lib -ltorch -lc10 -ltorch_cpu
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \
@@ -47,7 +54,7 @@ endif
 
 ifeq ($(HIP), yes)
   CFLAGS += -fsycl-targets=amdgcn-amd-amdhsa \
-	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH) 
+	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH)
 endif
 
 # Debug Flags
@@ -58,12 +65,16 @@ endif
 
 # Optimization Flags
 ifeq ($(OPTIMIZE),yes)
-  CFLAGS += -O3 -ffast-math
+  CFLAGS += -O3
 endif
 
 ifeq ($(GPU),yes)
   CFLAGS +=-DUSE_GPU
 endif
+
+# Define BF, BB, Tmax macros (adjust as needed)
+CFLAGS += -DBF=1 -DBB=1 -DTmax=256
+
 #===============================================================================
 # Targets to Build
 #===============================================================================
@@ -78,4 +89,4 @@ clean:
 	rm -rf $(program) $(obj)
 
 run: $(program)
-	$(LAUNCHER) ./$(program) 100
+	$(LAUNCHER) ./$(program)

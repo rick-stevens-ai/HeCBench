@@ -21,7 +21,7 @@ HIP_ARCH  = gfx908
 
 program = main
 
-source = cosine.cpp fresnel.cpp main.cpp sine.cpp xchebyshev.cpp
+source = src/beyond.cpp
 
 obj = $(source:.cpp=.o)
 
@@ -30,7 +30,8 @@ obj = $(source:.cpp=.o)
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../../include -fsycl --gcc-toolchain=$(GCC_TOOLCHAIN)
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -fsycl \
+          -I./src --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
     CFLAGS_TMP := $(CFLAGS)
@@ -38,7 +39,7 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = 
+LDFLAGS =
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \
@@ -47,7 +48,7 @@ endif
 
 ifeq ($(HIP), yes)
   CFLAGS += -fsycl-targets=amdgcn-amd-amdhsa \
-	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH) 
+	    -Xsycl-target-backend --offload-arch=$(HIP_ARCH)
 endif
 
 # Debug Flags
@@ -58,7 +59,7 @@ endif
 
 # Optimization Flags
 ifeq ($(OPTIMIZE),yes)
-  CFLAGS += -O3 -ffast-math
+  CFLAGS += -O3
 endif
 
 ifeq ($(GPU),yes)
@@ -71,11 +72,11 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-%.o: %.cpp
+src/beyond.o: src/beyond.cpp src/SNICIT.hpp src/kernel.hpp src/general.hpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(program) $(obj)
 
 run: $(program)
-	$(LAUNCHER) ./$(program) 100
+	$(LAUNCHER) ./$(program)

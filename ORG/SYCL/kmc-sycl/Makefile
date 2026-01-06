@@ -84,10 +84,10 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-main.o: main.cpp ../kmc-cuda/driver.c ../kmc-cuda/svm.h
+main.o: main.cpp driver.c svm.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-svm.o: ../kmc-cuda/svm.cpp ../kmc-cuda/driver.c ../kmc-cuda/svm.h
+svm.o: svm.cpp driver.c svm.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

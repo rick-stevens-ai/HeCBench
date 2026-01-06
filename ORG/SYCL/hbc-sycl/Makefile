@@ -73,23 +73,23 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-main.o: main.cpp ../hbc-cuda/parse.h ../hbc-cuda/sequential.h util.h
+main.o: main.cpp parse.h sequential.h util.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 kernels.o: kernels.cpp util.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-util.o: ../hbc-cuda/util.cpp util.h 
+util.o: util.cpp util.h 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-sequential.o: ../hbc-cuda/sequential.cpp ../hbc-cuda/sequential.h
+sequential.o: sequential.cpp sequential.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-parse.o: ../hbc-cuda/parse.cpp ../hbc-cuda/parse.h
+parse.o: parse.cpp parse.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(program) $(obj) output.txt
 
 run: $(program)
-	$(LAUNCHER) ./$(program) -i ../hbc-cuda/graphs/breast_coexpress.txt -v --printscores=output.txt
+	$(LAUNCHER) ./$(program) -i graphs/breast_coexpress.txt -v --printscores=output.txt

@@ -173,13 +173,13 @@ static inline DoubleComplex Cdiv(DoubleComplex x, DoubleComplex y)
 {
     DoubleComplex quot;
     float s = (sycl::fabs(Creal(y))) + (sycl::fabs(Cimag(y)));
-    float oos = 1.0 / s;
+    float oos = 1.0f / s;
     float ars = Creal(x) * oos;
     float ais = Cimag(x) * oos;
     float brs = Creal(y) * oos;
     float bis = Cimag(y) * oos;
     s = (brs * brs) + (bis * bis);
-    oos = 1.0 / s;
+    oos = 1.0f / s;
     quot = make_DoubleComplex (((ars * brs) + (ais * bis)) * oos,
                                  ((ais * brs) - (ars * bis)) * oos);
     return quot;
@@ -206,10 +206,10 @@ static inline float Cabs (DoubleComplex x)
         w = a;
     }
     t = w / v;
-    t = 1.0 + t * t;
+    t = 1.0f + t * t;
     t = v * sycl::sqrt(t);
-    if ((v == 0.0) || 
-        (v > 1.79769313486231570e+308) || (w > 1.79769313486231570e+308)) {
+    if ((v == 0.0f) ||
+        (v > 3.402823466e38f) || (w > 3.402823466e38f)) {
         t = v + w;
     }
     return t;

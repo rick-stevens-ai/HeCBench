@@ -19,7 +19,7 @@ Real primordial_cool(Real n, Real T, int heat_flag)
   int n_iter;
   Real diff, tol;
 
-  Y = 0.24; //helium abundance by mass
+  Y = 0.24f; //helium abundance by mass
   y = Y/(4 - 4*Y);
 
   // set the hydrogen number density
@@ -27,43 +27,43 @@ Real primordial_cool(Real n, Real T, int heat_flag)
 
   // calculate the recombination and collisional ionization rates
   // (Table 2 from Katz 1996)
-  alpha_hp = (8.4e-11) * (1.0 / sycl::sqrt(T)) *
-             sycl::pow((T / 1e3), (-0.2)) *
-             (1.0 / (1.0 + sycl::pow((T / 1e6), (0.7))));
-  alpha_hep = (1.5e-10) * (sycl::pow(T, (-0.6353)));
-  alpha_d = (1.9e-3) * (sycl::pow(T, (-1.5))) *
-            sycl::exp(-470000.0 / T) * (1.0 + 0.3 * sycl::exp(-94000.0 / T));
-  alpha_hepp = (3.36e-10) * (1.0 / sycl::sqrt(T)) *
-               sycl::pow((T / 1e3), (-0.2)) *
-               (1.0 / (1.0 + sycl::pow((T / 1e6), (0.7))));
-  gamma_eh0 = (5.85e-11) * sycl::sqrt(T) * sycl::exp(-157809.1 / T) *
-              (1.0 / (1.0 + sycl::sqrt(T / 1e5)));
-  gamma_ehe0 = (2.38e-11) * sycl::sqrt(T) * sycl::exp(-285335.4 / T) *
-               (1.0 / (1.0 + sycl::sqrt(T / 1e5)));
-  gamma_ehep = (5.68e-12) * sycl::sqrt(T) * sycl::exp(-631515.0 / T) *
-               (1.0 / (1.0 + sycl::sqrt(T / 1e5)));
+  alpha_hp = (8.4e-11f) * (1.0f / sycl::sqrt(T)) *
+             sycl::pow((T / 1e3f), (-0.2f)) *
+             (1.0f / (1.0f + sycl::pow((T / 1e6f), (0.7f))));
+  alpha_hep = (1.5e-10f) * (sycl::pow(T, (-0.6353f)));
+  alpha_d = (1.9e-3f) * (sycl::pow(T, (-1.5f))) *
+            sycl::exp(-470000.0f / T) * (1.0f + 0.3f * sycl::exp(-94000.0f / T));
+  alpha_hepp = (3.36e-10f) * (1.0f / sycl::sqrt(T)) *
+               sycl::pow((T / 1e3f), (-0.2f)) *
+               (1.0f / (1.0f + sycl::pow((T / 1e6f), (0.7f))));
+  gamma_eh0 = (5.85e-11f) * sycl::sqrt(T) * sycl::exp(-157809.1f / T) *
+              (1.0f / (1.0f + sycl::sqrt(T / 1e5f)));
+  gamma_ehe0 = (2.38e-11f) * sycl::sqrt(T) * sycl::exp(-285335.4f / T) *
+               (1.0f / (1.0f + sycl::sqrt(T / 1e5f)));
+  gamma_ehep = (5.68e-12f) * sycl::sqrt(T) * sycl::exp(-631515.0f / T) *
+               (1.0f / (1.0f + sycl::sqrt(T / 1e5f)));
   // externally evaluated integrals for photoionization rates
   // assumed J(nu) = 10^-22 (nu_L/nu)
-  gamma_lh0 = 3.19851e-13;
-  gamma_lhe0 = 3.13029e-13;
-  gamma_lhep = 2.00541e-14;
+  gamma_lh0 = 3.19851e-13f;
+  gamma_lhe0 = 3.13029e-13f;
+  gamma_lhep = 2.00541e-14f;
   // externally evaluated integrals for heating rates
-  e_h0 = 2.4796e-24;
-  e_he0 = 6.86167e-24;
-  e_hep = 6.21868e-25;
+  e_h0 = 2.4796e-24f;
+  e_he0 = 6.86167e-24f;
+  e_hep = 6.21868e-25f;
 
   // assuming no photoionization, solve equations for number density of
   // each species
   n_e = n_h; //as a first guess, use the hydrogen number density
   n_iter = 20;
-  diff = 1.0;
-  tol = 1.0e-6;
+  diff = 1.0f;
+  tol = 1.0e-6f;
   if (heat_flag) {
     for (int i=0; i<n_iter; i++) {
       n_e_old = n_e;
       n_h0   = n_h*alpha_hp / (alpha_hp + gamma_eh0 + gamma_lh0/n_e);
       n_hp   = n_h - n_h0;
-      n_hep  = y*n_h / (1.0 + (alpha_hep + alpha_d)/(gamma_ehe0 + gamma_lhe0/n_e) + (gamma_ehep + gamma_lhep/n_e)/alpha_hepp);
+      n_hep  = y*n_h / (1.0f + (alpha_hep + alpha_d)/(gamma_ehe0 + gamma_lhe0/n_e) + (gamma_ehep + gamma_lhep/n_e)/alpha_hepp);
       n_he0  = n_hep*(alpha_hep + alpha_d) / (gamma_ehe0 + gamma_lhe0/n_e);
       n_hepp = n_hep*(gamma_ehep + gamma_lhep/n_e)/alpha_hepp;
       n_e    = n_hp + n_hep + 2*n_hepp;
@@ -74,7 +74,7 @@ Real primordial_cool(Real n, Real T, int heat_flag)
   else {
     n_h0   = n_h*alpha_hp / (alpha_hp + gamma_eh0);
     n_hp   = n_h - n_h0;
-    n_hep  = y*n_h / (1.0 + (alpha_hep + alpha_d)/(gamma_ehe0) + (gamma_ehep)/alpha_hepp);
+    n_hep  = y*n_h / (1.0f + (alpha_hep + alpha_d)/(gamma_ehe0) + (gamma_ehep)/alpha_hepp);
     n_he0  = n_hep*(alpha_hep + alpha_d) / (gamma_ehe0);
     n_hepp = n_hep*(gamma_ehep)/alpha_hepp;
     n_e    = n_hp + n_hep + 2*n_hepp;
@@ -82,34 +82,34 @@ Real primordial_cool(Real n, Real T, int heat_flag)
 
   // using number densities, calculate cooling rates for
   // various processes (Table 1 from Katz 1996)
-  le_h0 = (7.50e-19) * sycl::exp(-118348.0 / T) *
-          (1.0 / (1.0 + sycl::sqrt(T / 1e5))) * n_e * n_h0;
-  le_hep = (5.54e-17) * sycl::pow(T, (-0.397)) *
-           sycl::exp(-473638.0 / T) * (1.0 / (1.0 + sycl::sqrt(T / 1e5))) *
+  le_h0 = (7.50e-19f) * sycl::exp(-118348.0f / T) *
+          (1.0f / (1.0f + sycl::sqrt(T / 1e5f))) * n_e * n_h0;
+  le_hep = (5.54e-17f) * sycl::pow(T, (-0.397f)) *
+           sycl::exp(-473638.0f / T) * (1.0f / (1.0f + sycl::sqrt(T / 1e5f))) *
            n_e * n_hep;
-  li_h0 = (1.27e-21) * sycl::sqrt(T) * sycl::exp(-157809.1 / T) *
-          (1.0 / (1.0 + sycl::sqrt(T / 1e5))) * n_e * n_h0;
-  li_he0 = (9.38e-22) * sycl::sqrt(T) * sycl::exp(-285335.4 / T) *
-           (1.0 / (1.0 + sycl::sqrt(T / 1e5))) * n_e * n_he0;
-  li_hep = (4.95e-22) * sycl::sqrt(T) * sycl::exp(-631515.0 / T) *
-           (1.0 / (1.0 + sycl::sqrt(T / 1e5))) * n_e * n_hep;
-  lr_hp = (8.70e-27) * sycl::sqrt(T) * sycl::pow((T / 1e3), (-0.2)) *
-          (1.0 / (1.0 + sycl::pow((T / 1e6), (0.7)))) * n_e * n_hp;
-  lr_hep = (1.55e-26) * sycl::pow(T, (0.3647)) * n_e * n_hep;
-  lr_hepp = (3.48e-26) * sycl::sqrt(T) * sycl::pow((T / 1e3), (-0.2)) *
-            (1.0 / (1.0 + sycl::pow((T / 1e6), (0.7)))) * n_e * n_hepp;
-  ld_hep = (1.24e-13) * sycl::pow(T, (-1.5)) *
-           sycl::exp(-470000.0 / T) * (1.0 + 0.3 * sycl::exp(-94000.0 / T)) *
+  li_h0 = (1.27e-21f) * sycl::sqrt(T) * sycl::exp(-157809.1f / T) *
+          (1.0f / (1.0f + sycl::sqrt(T / 1e5f))) * n_e * n_h0;
+  li_he0 = (9.38e-22f) * sycl::sqrt(T) * sycl::exp(-285335.4f / T) *
+           (1.0f / (1.0f + sycl::sqrt(T / 1e5f))) * n_e * n_he0;
+  li_hep = (4.95e-22f) * sycl::sqrt(T) * sycl::exp(-631515.0f / T) *
+           (1.0f / (1.0f + sycl::sqrt(T / 1e5f))) * n_e * n_hep;
+  lr_hp = (8.70e-27f) * sycl::sqrt(T) * sycl::pow((T / 1e3f), (-0.2f)) *
+          (1.0f / (1.0f + sycl::pow((T / 1e6f), (0.7f)))) * n_e * n_hp;
+  lr_hep = (1.55e-26f) * sycl::pow(T, (0.3647f)) * n_e * n_hep;
+  lr_hepp = (3.48e-26f) * sycl::sqrt(T) * sycl::pow((T / 1e3f), (-0.2f)) *
+            (1.0f / (1.0f + sycl::pow((T / 1e6f), (0.7f)))) * n_e * n_hepp;
+  ld_hep = (1.24e-13f) * sycl::pow(T, (-1.5f)) *
+           sycl::exp(-470000.0f / T) * (1.0f + 0.3f * sycl::exp(-94000.0f / T)) *
            n_e * n_hep;
-  g_ff = 1.1 + 0.34 * sycl::exp(-(5.5 - sycl::log(T)) * (5.5 - sycl::log(T)) /
-                                3.0); // Gaunt factor
-  l_ff = (1.42e-27) * g_ff * sycl::sqrt(T) * (n_hp + n_hep + 4 * n_hepp) * n_e;
+  g_ff = 1.1f + 0.34f * sycl::exp(-(5.5f - sycl::log(T)) * (5.5f - sycl::log(T)) /
+                                3.0f); // Gaunt factor
+  l_ff = (1.42e-27f) * g_ff * sycl::sqrt(T) * (n_hp + n_hep + 4 * n_hepp) * n_e;
 
   // calculate total cooling rate (erg s^-1 cm^-3)
   cool = le_h0 + le_hep + li_h0 + li_he0 + li_hep + lr_hp + lr_hep + lr_hepp + ld_hep + l_ff;
 
   // calculate total photoionization heating rate
-  H = 0.0;
+  H = 0.0f;
   if (heat_flag) {
     H = n_h0*e_h0 + n_he0*e_he0 + n_hep*e_hep;
   }
@@ -155,11 +155,11 @@ int main(int argc, char* argv[])
     
   const size_t size_bytes = sizeof(Real) * num;
 
-  const Real n = 0.0899; // density
+  const Real n = 0.0899f; // density
 
   Real *T = (Real*) malloc (size_bytes);
   for (int i = 0; i < num; i++) {
-    T[i] = -275.0 + i * 275 * 2.0 / num;
+    T[i] = -275.0f + i * 275 * 2.0f / num;
   }
 
   Real *r = (Real*) malloc (size_bytes);

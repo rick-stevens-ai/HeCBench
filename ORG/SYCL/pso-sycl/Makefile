@@ -75,7 +75,7 @@ $(program): $(obj)
 kernel_gpu.o: kernel_gpu.cpp kernel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-kernel_cpu.o: ../pso-cuda/kernel_cpu.cpp kernel.h
+kernel_cpu.o: kernel_cpu.cpp kernel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 main.o: main.cpp kernel.h
