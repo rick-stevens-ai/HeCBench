@@ -9,9 +9,9 @@ void init_gcf(PRECISION2 *gcf, size_t size) {
     for (size_t sub_y=0; sub_y<GCF_GRID; sub_y++ )
       for(size_t x=0; x<size; x++)
         for(size_t y=0; y<size; y++) {
-          PRECISION tmp = sinf(6.28*x/size/GCF_GRID)*expf(-(1.0*x*x+1.0*y*y*sub_y)/size/size/2);
-          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].x() = tmp*sinf(1.0*x*sub_x/(y+1));
-          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].y() = tmp*cosf(1.0*x*sub_x/(y+1));
+          PRECISION tmp = sinf(6.28f*x/size/GCF_GRID)*expf(-(1.0f*x*x+1.0f*y*y*sub_y)/size/size/2);
+          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].x() = tmp*sinf(1.0f*x*sub_x/(y+1));
+          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].y() = tmp*cosf(1.0f*x*sub_x/(y+1));
         }
 }
 
@@ -29,8 +29,8 @@ void degridCPU(PRECISION2 *out, PRECISION2 *in, PRECISION2 *img, PRECISION2 *gcf
     int sub_y = floorf(GCF_GRID*(in[n].y()-floorf(in[n].y())));
     int main_x = floorf(in[n].x());
     int main_y = floorf(in[n].y());
-    PRECISION sum_r = 0.0;
-    PRECISION sum_i = 0.0;
+    PRECISION sum_r = 0.0f;
+    PRECISION sum_i = 0.0f;
     for (int a=-GCF_DIM/2; a<GCF_DIM/2 ;a++)
       for (int b=-GCF_DIM/2; b<GCF_DIM/2 ;b++) {
         PRECISION r1 = img[main_x+a+IMG_SIZE*(main_y+b)].x(); 
@@ -89,15 +89,15 @@ int main(void) {
   }
   for(size_t x=0; x<IMG_SIZE;x++)
     for(size_t y=0; y<IMG_SIZE;y++) {
-      img[x+IMG_SIZE*y].x() = expf(-((x-1400.0)*(x-1400.0)+(y-3800.0)*(y-3800.0))/8000000.0)+1.0;
-      img[x+IMG_SIZE*y].y() = 0.4;
+      img[x+IMG_SIZE*y].x() = expf(-((x-1400.0f)*(x-1400.0f)+(y-3800.0f)*(y-3800.0f))/8000000.0f)+1.0f;
+      img[x+IMG_SIZE*y].y() = 0.4f;
     }
   //Zero the data in the offset areas
   for (int x=-IMG_SIZE*GCF_DIM-GCF_DIM;x<0;x++) {
-    img[x].x() = 0.0; img[x].y() = 0.0;
+    img[x].x() = 0.0f; img[x].y() = 0.0f;
   }
   for (int x=0;x<IMG_SIZE*GCF_DIM+GCF_DIM;x++) {
-    img[x+IMG_SIZE*IMG_SIZE].x() = 0.0; img[x+IMG_SIZE*IMG_SIZE].y() = 0.0;
+    img[x+IMG_SIZE*IMG_SIZE].x() = 0.0f; img[x+IMG_SIZE*IMG_SIZE].y() = 0.0f;
   }
 
   std::qsort(in, NPOINTS, sizeof(PRECISION2), w_comp_sub<PRECISION2,PRECISION>);
