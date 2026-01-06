@@ -3,7 +3,8 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 MPI_ROOT  = /opt/intel/oneapi/2024.1

@@ -3,7 +3,8 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 DUMP      = no

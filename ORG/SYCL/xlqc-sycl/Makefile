@@ -3,7 +3,8 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 GSL_INC   =-I/path/to/gsl/include
@@ -31,7 +32,7 @@ obj=basis.o scf.o main.o crys.o cints.o
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -I../xlqc-cuda -Iint_lib $(GSL_INC) \
+CFLAGS := $(EXTRA_CFLAGS) -I../../CUDA/xlqc-cuda -Iint_lib $(GSL_INC) \
           --gcc-toolchain=$(GCC_TOOLCHAIN) \
           -std=c++17 -Wall -fsycl
 

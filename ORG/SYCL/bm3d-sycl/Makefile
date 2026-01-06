@@ -32,7 +32,7 @@ obj = $(source:.cpp=.o)
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I. -I../bm3d-cuda -fsycl \
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I. -I../../CUDA/bm3d-cuda -fsycl \
           --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)

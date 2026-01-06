@@ -3,7 +3,8 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 LAUNCHER  =
@@ -32,7 +33,7 @@ obj = main.o svm.o
 ONEMKL_PATH = /path/to/oneMKL
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../kmc-cuda -fsycl \
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../../CUDA/kmc-cuda -fsycl \
           --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)

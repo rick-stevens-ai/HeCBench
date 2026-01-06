@@ -3,7 +3,8 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 LAUNCHER  =
@@ -30,7 +31,7 @@ obj = main.o kernels.o util.o parse.o sequential.o
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../include -fsycl -I../hbc-cuda \
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../include -fsycl -I../../CUDA/hbc-cuda \
           --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
