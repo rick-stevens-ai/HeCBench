@@ -9,9 +9,9 @@ void init_gcf(PRECISION2 *gcf, size_t size) {
     for (size_t sub_y=0; sub_y<GCF_GRID; sub_y++ )
       for(size_t x=0; x<size; x++)
         for(size_t y=0; y<size; y++) {
-          PRECISION tmp = std::sinf(6.28*x/size/GCF_GRID)*std::expf(-(1.0*x*x+1.0*y*y*sub_y)/size/size/2);
-          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].x() = tmp*std::sinf(1.0*x*sub_x/(y+1));
-          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].y() = tmp*std::cosf(1.0*x*sub_x/(y+1));
+          PRECISION tmp = sinf(6.28*x/size/GCF_GRID)*expf(-(1.0*x*x+1.0*y*y*sub_y)/size/size/2);
+          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].x() = tmp*sinf(1.0*x*sub_x/(y+1));
+          gcf[size*size*(sub_x+sub_y*GCF_GRID)+x+y*size].y() = tmp*cosf(1.0*x*sub_x/(y+1));
         }
 }
 
@@ -25,10 +25,10 @@ void degridCPU(PRECISION2 *out, PRECISION2 *in, PRECISION2 *img, PRECISION2 *gcf
   //offset gcf to point to the middle for cleaner code later
   gcf += GCF_DIM*(GCF_DIM+1)/2;
   for(size_t n=0; n<NPOINTS; n++) {
-    int sub_x = std::floorf(GCF_GRID*(in[n].x()-std::floorf(in[n].x())));
-    int sub_y = std::floorf(GCF_GRID*(in[n].y()-std::floorf(in[n].y())));
-    int main_x = std::floorf(in[n].x());
-    int main_y = std::floorf(in[n].y());
+    int sub_x = floorf(GCF_GRID*(in[n].x()-floorf(in[n].x())));
+    int sub_y = floorf(GCF_GRID*(in[n].y()-floorf(in[n].y())));
+    int main_x = floorf(in[n].x());
+    int main_y = floorf(in[n].y());
     PRECISION sum_r = 0.0;
     PRECISION sum_i = 0.0;
     for (int a=-GCF_DIM/2; a<GCF_DIM/2 ;a++)
@@ -89,7 +89,7 @@ int main(void) {
   }
   for(size_t x=0; x<IMG_SIZE;x++)
     for(size_t y=0; y<IMG_SIZE;y++) {
-      img[x+IMG_SIZE*y].x() = std::expf(-((x-1400.0)*(x-1400.0)+(y-3800.0)*(y-3800.0))/8000000.0)+1.0;
+      img[x+IMG_SIZE*y].x() = expf(-((x-1400.0)*(x-1400.0)+(y-3800.0)*(y-3800.0))/8000000.0)+1.0;
       img[x+IMG_SIZE*y].y() = 0.4;
     }
   //Zero the data in the offset areas
@@ -115,8 +115,8 @@ int main(void) {
 
   bool ok = true;
   for (size_t n = 0; n < NPOINTS; n++) {
-    if (std::fabsf(out[n].x()-out_cpu[n].x()) > EPS ||
-        std::fabsf(out[n].y()-out_cpu[n].y()) > EPS ) {
+    if (fabsf(out[n].x()-out_cpu[n].x()) > EPS ||
+        fabsf(out[n].y()-out_cpu[n].y()) > EPS ) {
       ok = false;
       std::cout << n << ": F(" << in[n].x() << ", " << in[n].y() << ") = " 
         << out[n].x() << ", " << out[n].y() 

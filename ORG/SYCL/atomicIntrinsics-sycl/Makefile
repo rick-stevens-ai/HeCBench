@@ -4,6 +4,7 @@
 
 # Compiler can be set below, or via environment variable
 CC        = icpx
+CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 LAUNCHER  =
@@ -32,7 +33,7 @@ obj = $(source:.cpp=.o)
 #===============================================================================
 
 # Standard Flags
-CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../atomicIntrinsics-cuda -fsycl \
+CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../../CUDA/atomicIntrinsics-cuda -fsycl \
           --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
@@ -80,7 +81,10 @@ endif
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-%.o: %.cpp ../atomicIntrinsics-cuda/reference.h
+main.o: main.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

@@ -16,6 +16,7 @@
 
 // standard utilities and systems includes
 #include <stdio.h>
+#include <cmath>
 #include "MT.h"
 #include <sycl/sycl.hpp>
 
@@ -202,9 +203,9 @@ int main(int argc, const char **argv)
     for(int j = 0; j < nPerRng; j++) {
       double rCPU = h_RandCPU[i * nPerRng + j];
       double rGPU = h_RandGPU[i + j * MT_RNG_COUNT];
-      double delta = std::fabs(rCPU - rGPU);
+      double delta = fabs(rCPU - rGPU);
       sum_delta += delta;
-      sum_ref   += std::fabs(rCPU);
+      sum_ref   += fabs(rCPU);
     }
   }
   double L1norm = sum_delta / sum_ref;
