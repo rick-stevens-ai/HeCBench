@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 #include <chrono>
 #include <sycl/sycl.hpp>
 
@@ -643,7 +644,7 @@ int main(int argc, char **argv)
 
     bool ok = true;
     for (int i = 0; i < size_x*size_y; i++)
-      if (fabsf(gold[i] - h_odata[i]) > 0.01f) {
+      if (std::fabs(gold[i] - h_odata[i]) > 0.01f) {
         ok = false;
         break;
       }
