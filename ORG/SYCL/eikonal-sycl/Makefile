@@ -82,7 +82,7 @@ kernel.o: kernel.cpp kernel.h
 fim.o: fim.cpp fim.h kernel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-timer.o : ../eikonal-cuda/timer.cpp ../eikonal-cuda/timer.h ../eikonal-cuda/my_exception.h
+timer.o : ../../CUDA/eikonal-cuda/timer.cpp ../../CUDA/eikonal-cuda/timer.h ../../CUDA/eikonal-cuda/my_exception.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 StructuredEikonal.o : StructuredEikonal.cpp StructuredEikonal.h common_def.h
