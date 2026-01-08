@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 #include <chrono>
 #include <sycl/sycl.hpp>
 
@@ -156,7 +157,7 @@ unsigned long long BP_queens_prefixes(int size, int initialDepth,
 void nqueens(short size, int initial_depth, unsigned int n_explorers, QueenRoot *root_prefixes_h ,
              unsigned long long *vector_of_tree_size_h, unsigned long long *sols_h, const int repeat)
 {
-  int num_blocks = ceil((double)n_explorers/_QUEENS_BLOCK_SIZE_);
+  int num_blocks = std::ceil((double)n_explorers/_QUEENS_BLOCK_SIZE_);
 
 #ifdef USE_GPU
   sycl::queue q(sycl::gpu_selector_v, sycl::property::queue::in_order());
