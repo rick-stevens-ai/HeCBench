@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <chrono>
 #include <sycl/sycl.hpp>
 #include "bitmap_image.hpp"
@@ -208,11 +209,11 @@ int main(int argc, char* argv[]) {
   int *d_min_mse = sycl::malloc_device<int>(1, q);
   int *d_num_occurances = sycl::malloc_device<int>(1, q);
 
-  sycl::range<2> gws ((unsigned int)ceilf((float)main_height / BLOCK_SIZE_Y) * BLOCK_SIZE_Y,
-                      (unsigned int)ceilf((float)main_width / BLOCK_SIZE_X) * BLOCK_SIZE_X );
+  sycl::range<2> gws ((unsigned int)std::ceil((float)main_height / BLOCK_SIZE_Y) * BLOCK_SIZE_Y,
+                      (unsigned int)std::ceil((float)main_width / BLOCK_SIZE_X) * BLOCK_SIZE_X );
   sycl::range<2> lws (BLOCK_SIZE_Y, BLOCK_SIZE_X);
 
-  sycl::range<1> gws2 ((unsigned int)ceilf((float)sad_array_size / BLOCK_SIZE) * BLOCK_SIZE);
+  sycl::range<1> gws2 ((unsigned int)std::ceil((float)sad_array_size / BLOCK_SIZE) * BLOCK_SIZE);
   sycl::range<1> lws2 (BLOCK_SIZE);
 
   // Measure device execution time
