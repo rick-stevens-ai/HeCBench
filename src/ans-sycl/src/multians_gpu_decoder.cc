@@ -18,7 +18,7 @@ inline void decode_subsequence(
     std::uint32_t shift,
     std::uint32_t start_bit,
     std::uint32_t &in_pos,
-    UNIT_TYPE* in_ptr,
+    const UNIT_TYPE* in_ptr,
     UNIT_TYPE &window,
     UNIT_TYPE &next,
     STATE_TYPE &state,
@@ -193,7 +193,7 @@ void phase1_decode_subseq(
     std::uint32_t subsequence_size,
     std::uint32_t total_num_subsequences,
     std::uint32_t table_size,
-    UNIT_TYPE* in_ptr,
+    const UNIT_TYPE* in_ptr,
     const uint* __restrict__ table,
     sycl::uint4* sync_points,
     const std::uint32_t bits_in_unit,
@@ -363,7 +363,7 @@ void phase2_synchronise_blocks(
     std::uint32_t total_num_subsequences,
     std::uint32_t table_size,
     std::uint32_t num_blocks,
-    UNIT_TYPE* in_ptr,
+    const UNIT_TYPE* in_ptr,
     const uint* __restrict__ table,
     sycl::uint4* sync_points,
     SYMBOL_TYPE* block_synchronised,
@@ -494,7 +494,7 @@ void phase4_decode_write_output(
     std::uint32_t subsequence_size,
     std::uint32_t total_num_subsequences,
     std::uint32_t table_size,
-    UNIT_TYPE* in_ptr,
+    const UNIT_TYPE* in_ptr,
     SYMBOL_TYPE* out_ptr,
     std::uint32_t output_size,
     const uint* __restrict__ table,
@@ -611,9 +611,9 @@ void cuhd::CUHDGPUDecoder::decode(
       preferred_subsequence_size,
       num_subseq,
       max_codeword_length,
-      input_buffer.get_pointer(),
-      table.get_pointer(),
-      sync_info.get_pointer(),
+      input_buffer.get_multi_ptr<sycl::access::decorated::no>().get(),
+      table.get_multi_ptr<sycl::access::decorated::no>().get(),
+      sync_info.get_multi_ptr<sycl::access::decorated::no>().get(),
       bits_in_unit,
       number_of_states,
       initial_state,
@@ -639,10 +639,10 @@ void cuhd::CUHDGPUDecoder::decode(
           num_subseq,
           max_codeword_length,
           num_sequences,
-          input_buffer.get_pointer(),
-          table.get_pointer(),
-          sync_info.get_pointer(),
-          sequence_synced.get_pointer(),
+          input_buffer.get_multi_ptr<sycl::access::decorated::no>().get(),
+          table.get_multi_ptr<sycl::access::decorated::no>().get(),
+          sync_info.get_multi_ptr<sycl::access::decorated::no>().get(),
+          sequence_synced.get_multi_ptr<sycl::access::decorated::no>().get(),
           bits_in_unit,
           number_of_states,
           initial_state,
@@ -684,9 +684,9 @@ void cuhd::CUHDGPUDecoder::decode(
     auto sync_info = d_sync_info.get_access<sycl::access::mode::read>(cgh);
     cgh.parallel_for<class p3>(sycl::nd_range<1>(p3_gws, p3_lws), [=] (sycl::nd_item<1> item) {
       phase3_copy_num_symbols_from_sync_points_to_aux(
-        num_subseq, 
-        sync_info.get_pointer(),
-        output_sizes.get_pointer(),
+        num_subseq,
+        sync_info.get_multi_ptr<sycl::access::decorated::no>().get(),
+        output_sizes.get_multi_ptr<sycl::access::decorated::no>().get(),
         item);
     });
   });
@@ -716,9 +716,9 @@ void cuhd::CUHDGPUDecoder::decode(
     auto sync_info = d_sync_info.get_access<sycl::access::mode::write>(cgh);
     cgh.parallel_for<class p3_2>(sycl::nd_range<1>(p3_gws, p3_lws), [=] (sycl::nd_item<1> item) {
       phase3_copy_num_symbols_from_aux_to_sync_points(
-        num_subseq, 
-        sync_info.get_pointer(),
-        output_sizes.get_pointer(),
+        num_subseq,
+        sync_info.get_multi_ptr<sycl::access::decorated::no>().get(),
+        output_sizes.get_multi_ptr<sycl::access::decorated::no>().get(),
         item);
     });
   });
@@ -737,11 +737,11 @@ void cuhd::CUHDGPUDecoder::decode(
       preferred_subsequence_size,
       num_subseq,
       max_codeword_length,
-      input_buffer.get_pointer(),
-      output_buffer.get_pointer(),
+      input_buffer.get_multi_ptr<sycl::access::decorated::no>().get(),
+      output_buffer.get_multi_ptr<sycl::access::decorated::no>().get(),
       output_size,
-      table.get_pointer(),
-      sync_info.get_pointer(),
+      table.get_multi_ptr<sycl::access::decorated::no>().get(),
+      sync_info.get_multi_ptr<sycl::access::decorated::no>().get(),
       bits_in_unit,
       number_of_states,
       initial_state,

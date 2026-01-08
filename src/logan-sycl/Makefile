@@ -3,7 +3,7 @@
 #===============================================================================
 
 # Compiler can be set below, or via environment variable
-CC        = clang++
+CC        = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 LAUNCHER  =
@@ -35,7 +35,7 @@ obj = $(source:.cpp=.o)
 CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall \
           --gcc-toolchain=$(GCC_TOOLCHAIN) \
           -Isrc -I$(OPENMP_INCLUDE) \
-          -fopenmp -fsycl
+          -qopenmp -fsycl
 
 ifeq ($(VENDOR), AdaptiveCpp)
     CFLAGS_TMP := $(CFLAGS)
@@ -43,7 +43,8 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = -L$(OPENMP_LIB) -lomp
+#LDFLAGS = -L$(OPENMP_LIB) -lomp
+LDFLAGS =
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \
