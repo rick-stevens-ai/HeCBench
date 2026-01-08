@@ -77,7 +77,7 @@ float sample_a(float a, float b, int N, float log_sum)
 
   float log_acceptance_ratio = (proposal - a) * log_sum +
     N * (proposal - a) * logf(b) -
-    N * (lgamma(proposal) - lgamma(a));
+    N * (::lgammaf(proposal) - ::lgammaf(a));
 
   float U = rand() / float(RAND_MAX);
 
@@ -109,7 +109,7 @@ float rgamma(oneapi::mkl::rng::device::philox4x32x10<1> *state,
              float a, float b)
 {
   float d = a - 1.f / 3.f;
-  float c = 1.f / sqrt(9.f * d);
+  float c = 1.f / sycl::sqrt(9.f * d);
   bool flag = true;
   float V;
 

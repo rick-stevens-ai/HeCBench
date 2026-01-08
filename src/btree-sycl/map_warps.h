@@ -80,7 +80,14 @@ bool try_acquire_lock(uint32_t* nodeAddress, sycl::nd_item<1> &item) {
 }
 
 inline int __ffs(int x) {
-  return (x == 0) ? 0 : sycl::ext::intel::ctz(x) + 1;
+  if (x == 0) return 0;
+  // Count trailing zeros manually
+  int count = 0;
+  while ((x & 1) == 0) {
+    x >>= 1;
+    count++;
+  }
+  return count + 1;
 }
 
 void acquire_lock(uint32_t* nodeAddress, sycl::nd_item<1> &item) {

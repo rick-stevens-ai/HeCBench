@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     printf("state[%d] = %lf\n", i, states[i]);
 #endif
   }
-  printf("RMSE = %lf\n", sqrt(rmse / (total_num_states)));
+  printf("RMSE = %lf\n", sycl::sqrt(rmse / (total_num_states)));
 
   free(states);
   free(states2);
