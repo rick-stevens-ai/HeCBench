@@ -1,10 +1,10 @@
 /**********************************************************************
-  Copyright ©2013 Advanced Micro Devices, Inc. All rights reserved.
+  Copyright ï¿½2013 Advanced Micro Devices, Inc. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
-  •   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
+  ï¿½   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+  ï¿½   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or
   other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -17,6 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cmath>
 #include <chrono>
 #include <sycl/sycl.hpp>
 #include "kernels.cpp"
@@ -265,14 +266,14 @@ int main(int argc, char *argv[])
         yLPattanaik = yLuminance;
       }
 
-      cLPattanaik =  yLPattanaik * log(deltaPattanaik + yLPattanaik / yLuminance) +
+      cLPattanaik =  yLPattanaik * sycl::log(deltaPattanaik + yLPattanaik / yLuminance) +
         gcPattanaik;
 
       float yDPattanaik = yLuminance / (yLuminance + cLPattanaik);
 
-      r = pow((r1 / yLuminance), gammaPattanaik) * yDPattanaik;
-      g = pow((g1 / yLuminance), gammaPattanaik) * yDPattanaik;
-      b = pow((b1 / yLuminance), gammaPattanaik) * yDPattanaik;
+      r = std::pow((r1 / yLuminance), gammaPattanaik) * yDPattanaik;
+      g = std::pow((g1 / yLuminance), gammaPattanaik) * yDPattanaik;
+      b = std::pow((b1 / yLuminance), gammaPattanaik) * yDPattanaik;
 
       referenceOutput[width * numChannels * y + (x * numChannels + 0)] = r;
       referenceOutput[width * numChannels * y + (x * numChannels + 1)] = g;
