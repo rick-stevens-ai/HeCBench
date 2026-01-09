@@ -237,7 +237,7 @@ void horizontalStep (
 void forEachHorizontalOdd(//__local struct TransformBuffer *buffer,
     nd_item<2> &item,
     struct TransformBuffer *buffer,
-    //accessor<TransformBuffer,1,sycl_read_write,sycl_lmem> &buffer,
+    //accessor<TransformBuffer,1,sycl_read_write,access::target::local> &buffer,
     const int firstLine,
     const int numLines,
     int flag) 
@@ -372,7 +372,7 @@ int getColumnOffset(int columnIndex,
 void initColumn(
     nd_item<2> &item,
     //__local struct FDWT53 * fdwt53,
-    const accessor<FDWT53,1,sycl_read_write,sycl_lmem> &fdwt53,
+    const accessor<FDWT53,1,sycl_read_write,access::target::local> &fdwt53,
     struct FDWT53Column *column,
     bool CHECKED,
     //__global const int * const input,
@@ -407,7 +407,7 @@ void initColumn(
 
 
 void loadAndVerticallyTransform (//__local struct FDWT53 *fdwt53,
-    const accessor<FDWT53,1,sycl_read_write,sycl_lmem> &fdwt53,
+    const accessor<FDWT53,1,sycl_read_write,access::target::local> &fdwt53,
     struct FDWT53Column *column,
     bool CHECKED,
     // __global const int * const input,
@@ -442,7 +442,7 @@ void loadAndVerticallyTransform (//__local struct FDWT53 *fdwt53,
 void transform(
     nd_item<2> &item,
     //__local struct FDWT53 *fdwt53,
-    const accessor<FDWT53,1,sycl_read_write,sycl_lmem> &fdwt53,
+    const accessor<FDWT53,1,sycl_read_write,access::target::local> &fdwt53,
 
     bool CHECK_LOADS,
     bool CHECK_WRITES,
