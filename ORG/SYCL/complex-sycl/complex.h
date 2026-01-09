@@ -208,8 +208,8 @@ static inline float Cabs (DoubleComplex x)
     t = w / v;
     t = 1.0f + t * t;
     t = v * sycl::sqrt(t);
-    if ((v == 0.0f) ||
-        (v > 3.402823466e38f) || (w > 3.402823466e38f)) {
+    if ((v == 0.0f) || 
+        (v > 3.40282e+38f) || (w > 3.40282e+38f)) {
         t = v + w;
     }
     return t;
