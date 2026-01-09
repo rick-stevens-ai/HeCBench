@@ -243,12 +243,18 @@ void lqsort(sycl::queue &q, T *db, T *dnb, std::vector<work_record<T>> &done) {
     cgh.parallel_for(
       sycl::nd_range<1>(LQSORT_LOCAL_WORKGROUP_SIZE * done.size(),
         LQSORT_LOCAL_WORKGROUP_SIZE), [=] (sycl::nd_item<1> item) {
+          auto workstack_ptr = workstack_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
+          auto mys_ptr = mys_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
+          auto mysn_ptr = mysn_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
+          auto temp_ptr = temp_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
+          auto lt_ptr = lt_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
+          auto gt_ptr = gt_acc.template get_multi_ptr<sycl::access::decorated::no>().get();
           lqsort_kernel(
-              db, dnb, doneb, item, workstack_acc.get_pointer(),
-              workstack_pointer_acc, mys_acc.get_pointer(),
-              mysn_acc.get_pointer(), temp_acc.get_pointer(),
+              db, dnb, doneb, item, workstack_ptr,
+              workstack_pointer_acc, mys_ptr,
+              mysn_ptr, temp_ptr,
               ltsum_acc, gtsum_acc,
-              lt_acc.get_pointer(), gt_acc.get_pointer());
+              lt_ptr, gt_ptr);
         });
   }).wait();
 

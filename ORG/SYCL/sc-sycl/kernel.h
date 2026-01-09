@@ -33,18 +33,19 @@
  *
  */
 
+#include <sycl/sycl.hpp>
 #include <atomic>
 #include "support/common.h"
 
-void run_cpu_threads(T *output, T *input, std::atomic_int *flags, int size, int value, int n_threads, int ldim,
+void run_cpu_threads(DATA_TYPE *output, DATA_TYPE *input, std::atomic_int *flags, int size, int value, int n_threads, int ldim,
     int n_tasks, float alpha
 #ifdef DYNAMIC_PARTITION
     , std::atomic_int *worklist
 #endif
     );
 
-void call_StreamCompaction_kernel(int blocks, int threads, int size, T value, int n_tasks, float alpha, 
-    T *output, T *input, int *flags, int l_mem_size
+void call_StreamCompaction_kernel(sycl::queue &q, int blocks, int threads, int size, DATA_TYPE value, int n_tasks, float alpha,
+    DATA_TYPE *output, DATA_TYPE *input, int *flags, int l_mem_size
 #ifdef DYNAMIC_PARTITION
     , int *worklist
 #endif

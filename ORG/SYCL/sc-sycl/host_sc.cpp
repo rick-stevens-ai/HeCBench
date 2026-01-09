@@ -41,7 +41,7 @@
 #include "support/partitioner.h"
 
 // CPU threads--------------------------------------------------------------------------------------
-void run_cpu_threads(T *output, T *input, std::atomic_int *flags, int size, int value, int n_threads, int ldim,
+void run_cpu_threads(DATA_TYPE *output, DATA_TYPE *input, std::atomic_int *flags, int size, int value, int n_threads, int ldim,
     int n_tasks, float alpha
 #ifdef DYNAMIC_PARTITION
     , std::atomic_int *worklist
@@ -63,7 +63,7 @@ void run_cpu_threads(T *output, T *input, std::atomic_int *flags, int size, int 
 
                 int l_count = 0;
                 // Declare on-chip memory
-                T   reg[REGS_CPU];
+                DATA_TYPE   reg[REGS_CPU];
                 int pos = my_s * REGS_CPU;
 // Load in on-chip memory
 #pragma unroll
