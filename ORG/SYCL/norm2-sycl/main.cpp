@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <algorithm>
 #include <chrono>
 #include <vector>
 #include <oneapi/mkl.hpp>
@@ -13,7 +14,7 @@ int main(int argc, char *argv[]) {
   }
 
   // repeat at least once
-  const int repeat = max(1, atoi(argv[1]));
+  const int repeat = std::max(1, atoi(argv[1]));
 
   bool ok = true;
 

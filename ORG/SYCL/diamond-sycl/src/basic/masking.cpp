@@ -23,7 +23,7 @@
 #define SEQ_LEN 33
 inline double firstRepeatOffsetProb(const double probMult, const int maxRepeatOffset) {
   if (probMult < 1 || probMult > 1)
-    return (1 - probMult) / (1 - cl::sycl::pow(probMult, (double)maxRepeatOffset));
+    return (1 - probMult) / (1 - sycl::pow(probMult, (double)maxRepeatOffset));
   else
     return 1.0 / maxRepeatOffset;
 }
@@ -141,7 +141,7 @@ int calcRepeatProbs(float *letterProbs,
   }
 
   const double bTot = backgroundProb;
-  return (cl::sycl::fabs(fTot - bTot) > cl::sycl::fmax(fTot, bTot) / 1e6);
+  return (sycl::fabs(fTot - bTot) > sycl::fmax(fTot, bTot) / 1e6);
 }
 
 

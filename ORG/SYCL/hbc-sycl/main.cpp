@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <cstdlib>
 #include <chrono>
+#include <sycl/sycl.hpp>
 
 #include "parse.h"
 #include "sequential.h"
