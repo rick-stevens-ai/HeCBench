@@ -32,7 +32,7 @@ obj = kernel.o fim.o timer.o main.o StructuredEikonal.o
 
 # Standard Flags
 CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -I../../CUDA/eikonal-cuda -fsycl \
-          --gcc-toolchain=$(GCC_TOOLCHAIN)
+          -DFLOAT --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
     CFLAGS_TMP := $(CFLAGS)
