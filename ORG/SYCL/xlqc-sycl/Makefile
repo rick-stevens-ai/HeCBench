@@ -7,8 +7,8 @@ CC        = icpx
 CXX       = icpx
 OPTIMIZE  = yes
 DEBUG     = no
-GSL_INC   =-I/path/to/gsl/include
-GSL_LIB   =-L/path/to/gsl/lib -lgsl -lgslcblas 
+GSL_INC   =-I/home/stevens/anaconda3/include
+GSL_LIB   =-L/home/stevens/anaconda3/lib -lgsl -lgslcblas 
 LAUNCHER  =
 
 GPU       = yes

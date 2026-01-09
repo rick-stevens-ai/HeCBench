@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <fstream>
 #include <chrono>
-#include <gdal/gdal_priv.h>
+#include <gdal_priv.h>
 #include <sycl/sycl.hpp>
 #include "Filter.h"
 

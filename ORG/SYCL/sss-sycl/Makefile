@@ -6,7 +6,7 @@
 CC        = icpx
 OPTIMIZE  = yes
 DEBUG     = no
-GSL       = /path/to/GSL
+GSL       = /home/stevens/anaconda3
 LAUNCHER  =
 
 CUDA      = no
