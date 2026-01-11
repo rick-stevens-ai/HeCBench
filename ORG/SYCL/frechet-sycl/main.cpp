@@ -22,6 +22,7 @@
 #include <random>
 #include <chrono>
 #include <sycl/sycl.hpp>
+#include "types.h"
 
 #define n_d 10000 /* `n_d` : Number of dimensions */
 
@@ -31,19 +32,19 @@
 
 void discrete_frechet_distance(const int s, const int n_1, const int n_2, const int repeat)
 {
-  double *ca, *c1, *c2;
+  DOUBLE *ca, *c1, *c2;
   int k; /* Index for initialisation of `ca`*/
 
-  int ca_size = n_1*n_2*sizeof(double);
-  int c1_size = n_1*n_d*sizeof(double);
-  int c2_size = n_2*n_d*sizeof(double);
+  int ca_size = n_1*n_2*sizeof(DOUBLE);
+  int c1_size = n_1*n_d*sizeof(DOUBLE);
+  int c2_size = n_2*n_d*sizeof(DOUBLE);
 
   /* `ca` : Search array (refer to [1], Table 1, matrix `ca`) */
-  ca = (double *) malloc (ca_size);
+  ca = (DOUBLE *) malloc (ca_size);
 
   /* `c1` and `c2` : Arrays with the 1st and 2nd curve's points respectively */
-  c1 = (double *) malloc (c1_size);
-  c2 = (double *) malloc (c2_size);
+  c1 = (DOUBLE *) malloc (c1_size);
+  c2 = (DOUBLE *) malloc (c2_size);
 
   /* Initialise it with -1.0 */
   for (k = 0; k < n_1*n_2; k++)
@@ -52,7 +53,7 @@ void discrete_frechet_distance(const int s, const int n_1, const int n_2, const 
   }
 
   std::mt19937 gen(19937);
-  std::uniform_real_distribution<double> dis(-1.0, 1.0);
+  std::uniform_real_distribution<DOUBLE> dis(-1.0, 1.0);
 
   for (k = 0; k < n_1 * n_d; k++)
   {
@@ -70,10 +71,10 @@ void discrete_frechet_distance(const int s, const int n_1, const int n_2, const 
   sycl::queue q(sycl::cpu_selector_v, sycl::property::queue::in_order());
 #endif
 
-  double *d_ca, *d_c1, *d_c2;
-  d_ca = (double*) sycl::malloc_device(ca_size, q);
-  d_c1 = (double*) sycl::malloc_device(c1_size, q);
-  d_c2 = (double*) sycl::malloc_device(c2_size, q);
+  DOUBLE *d_ca, *d_c1, *d_c2;
+  d_ca = (DOUBLE*) sycl::malloc_device(ca_size, q);
+  d_c1 = (DOUBLE*) sycl::malloc_device(c1_size, q);
+  d_c2 = (DOUBLE*) sycl::malloc_device(c2_size, q);
 
   q.memcpy(d_ca, ca, ca_size);
   q.memcpy(d_c1, c1, c1_size);
@@ -117,7 +118,7 @@ void discrete_frechet_distance(const int s, const int n_1, const int n_2, const 
 
   q.memcpy(ca, d_ca, ca_size).wait();
 
-  double checkSum = 0;
+  DOUBLE checkSum = 0;
   for (k = 0; k < n_1 * n_2; k++)
     checkSum += ca[k];
   printf("checkSum: %lf\n", checkSum);

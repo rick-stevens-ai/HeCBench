@@ -1,8 +1,9 @@
 #include <sycl/sycl.hpp>
+#include "types.h"
 
-double norm3(int i, int j, const double *c1, const double *c2)
+DOUBLE norm3(int i, int j, const DOUBLE *c1, const DOUBLE *c2)
 {
-  double dist, diff; /* Temp variables for simpler computations */
+  DOUBLE dist, diff; /* Temp variables for simpler computations */
   int k; /* Index for iterating over dimensions */
 
   /* Initialise distance */
@@ -25,59 +26,51 @@ double norm3(int i, int j, const double *c1, const double *c2)
   return dist;
 }
 
-double recursive_norm3(int i, int j, int n_2, double *ca,
-                       const double *c1, const double *c2)
+// Iterative version - fills DP matrix row by row
+void iterative_norm3(int n_1, int n_2, DOUBLE *ca,
+                     const DOUBLE *c1, const DOUBLE *c2)
 {
-  /*
-   * Target the shortcut to the (i, j)-th entry of the matrix `ca`
-   *
-   * Once again, notice the 1-offset.
-   */
-  double *ca_ij = ca + (i - 1)*n_2 + (j - 1);
+  // Fill base case: (1,1)
+  ca[0] = norm3(1, 1, c1, c2);
 
-  /* This implements the algorithm from [1] */
-  if (*ca_ij > -1.0)
-  {
-    return *ca_ij;
-  }
-  else if ((i == 1) && (j == 1))
-  {
-    *ca_ij = norm3(1, 1, c1, c2);
-  }
-  else if ((i > 1) && (j == 1))
-  {
-    *ca_ij = sycl::fmax(recursive_norm3(i - 1, 1, n_2, ca, c1, c2), norm3(i, 1, c1, c2));
-  }
-  else if ((i == 1) && (j > 1))
-  {
-    *ca_ij = sycl::fmax(recursive_norm3(1, j - 1, n_2, ca, c1, c2), norm3(1, j, c1, c2));
-  }
-  else if ((i > 1) && (j > 1))
-  {
-    *ca_ij = sycl::fmax(
-        sycl::fmin(sycl::fmin(
-            recursive_norm3(i - 1, j    , n_2, ca, c1, c2),
-            recursive_norm3(i - 1, j - 1, n_2, ca, c1, c2)),
-            recursive_norm3(i,     j - 1, n_2, ca, c1, c2)),
-        norm3(i, j, c1, c2));
-  }
-  else
-  {
-    *ca_ij = INFINITY;
+  // Fill first column: (i, 1) for i > 1
+  for (int i = 2; i <= n_1; i++) {
+    DOUBLE *ca_ij = ca + (i - 1)*n_2;
+    DOUBLE *ca_prev = ca + (i - 2)*n_2;
+    *ca_ij = sycl::fmax(*ca_prev, norm3(i, 1, c1, c2));
   }
 
-  return *ca_ij;
+  // Fill first row: (1, j) for j > 1
+  for (int j = 2; j <= n_2; j++) {
+    DOUBLE *ca_ij = ca + (j - 1);
+    DOUBLE *ca_prev = ca + (j - 2);
+    *ca_ij = sycl::fmax(*ca_prev, norm3(1, j, c1, c2));
+  }
+
+  // Fill remaining cells: (i, j) for i,j > 1
+  for (int i = 2; i <= n_1; i++) {
+    for (int j = 2; j <= n_2; j++) {
+      DOUBLE *ca_ij = ca + (i - 1)*n_2 + (j - 1);
+      DOUBLE *ca_up = ca + (i - 2)*n_2 + (j - 1);      // (i-1, j)
+      DOUBLE *ca_diag = ca + (i - 2)*n_2 + (j - 2);    // (i-1, j-1)
+      DOUBLE *ca_left = ca + (i - 1)*n_2 + (j - 2);    // (i, j-1)
+
+      *ca_ij = sycl::fmax(
+          sycl::fmin(sycl::fmin(*ca_up, *ca_diag), *ca_left),
+          norm3(i, j, c1, c2));
+    }
+  }
 }
 
 void distance_norm3 (
   sycl::nd_item<2> &item,
   int n_1, int n_2,
-  double *__restrict ca,
-  const double *__restrict c1,
-  const double *__restrict c2)
+  DOUBLE *__restrict ca,
+  const DOUBLE *__restrict c1,
+  const DOUBLE *__restrict c2)
 {
-  int i = item.get_global_id(1);
-  int j = item.get_global_id(0);
-  if (j >= 1 && j <= n_2 && i >= 1 && i <= n_1)
-    recursive_norm3(i, j, n_2, ca, c1, c2);
+  // Only one work-item computes the entire matrix
+  if (item.get_global_id(0) == 0 && item.get_global_id(1) == 0) {
+    iterative_norm3(n_1, n_2, ca, c1, c2);
+  }
 }
