@@ -1,4 +1,5 @@
 #include "kernel.hpp"
+#include "shuffle_compat.h"
 
 inline short
 warpReduceMax_with_index(short val, short& myIndex, short& myIndex2,
@@ -21,9 +22,9 @@ warpReduceMax_with_index(short val, short& myIndex, short& myIndex2,
   for(int offset = rem/2; rem > 0; offset = sycl::max(1, rem/2))
   {
     rem -= offset;
-    short tempVal = sg.shuffle_down(val, offset);
-    newInd  = sg.shuffle_down(ind, offset);
-    newInd2 = sg.shuffle_down(ind2, offset);
+    short tempVal = shuffle_compat::shuffle_down(sg, val, offset);
+    newInd  = shuffle_compat::shuffle_down(sg, ind, offset);
+    newInd2 = shuffle_compat::shuffle_down(sg, ind2, offset);
 
     // all shuffles are done
     sg.barrier();
@@ -33,7 +34,7 @@ warpReduceMax_with_index(short val, short& myIndex, short& myIndex2,
 #ifdef INTEL_GPU
     if(laneId + offset >= warpSize)
     {
-      val = 0
+      val = 0;
       newInd = 0;
       newInd2 = 0;
     }
@@ -303,8 +304,8 @@ void sequence_aa_kernel(
     {
       short fVal = _prev_F + extendGap;
       short hfVal = _prev_H + startGap;
-      short valeShfl = sg.shuffle(_prev_E, laneId- 1);
-      short valheShfl = sg.shuffle(_prev_H, laneId - 1);
+      short valeShfl = shuffle_compat::shuffle(sg, _prev_E, laneId- 1);
+      short valheShfl = shuffle_compat::shuffle(sg, _prev_H, laneId - 1);
 
       short eVal=0, heVal = 0;
 
@@ -327,7 +328,7 @@ void sequence_aa_kernel(
       _curr_F = (fVal > hfVal) ? fVal : hfVal;
       _curr_E = (eVal > heVal) ? eVal : heVal;
 
-      short testShufll = sg.shuffle(_prev_prev_H, laneId - 1);
+      short testShufll = shuffle_compat::shuffle(sg, _prev_prev_H, laneId - 1);
       short final_prev_prev_H = 0;
       if(diag >= maxSize)
       {
@@ -360,9 +361,9 @@ void sequence_aa_kernel(
       i++;
     } else {
       // we need these dummy shuffle operations for NVIDIA GPUs
-      short valeShfl = sg.shuffle(_prev_E, laneId);
-      short valheShfl =  sg.shuffle(_prev_H, laneId);
-      short testShufll = sg.shuffle(_prev_prev_H, laneId);
+      short valeShfl = shuffle_compat::shuffle(sg, _prev_E, laneId);
+      short valheShfl =  shuffle_compat::shuffle(sg, _prev_H, laneId);
+      short testShufll = shuffle_compat::shuffle(sg, _prev_prev_H, laneId);
     }
 
     group_barrier(gp);

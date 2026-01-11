@@ -21,7 +21,7 @@ HIP_ARCH  = gfx908
 
 program = main
 
-source = main.cpp flowGold.cpp flowSYCL.cpp
+source = main.cpp flowGold.cpp flowSYCL.cpp shrUtils.cpp
 
 obj = $(source:.cpp=.o)
 

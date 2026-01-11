@@ -1,6 +1,7 @@
 #ifndef BC_UTIL
 #define BC_UTIL
 
+#include <sycl/sycl.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -25,13 +26,14 @@ class program_options
 
 program_options parse_arguments(int argc, char *argv[]);
 
-void query_device(int &max_threads_per_block, int &number_of_SMs, program_options op);
+void query_device(sycl::queue &q, int &max_threads_per_block, int &number_of_SMs, program_options op);
 
 // compare cpu and gpu results
 void verify(graph g, const std::vector<float> bc_cpu, const std::vector<float> bc_gpu);
 
 // run bc on a GPU device
 std::vector<float> bc_gpu(
+  sycl::queue &q,
   graph g,
   int max_threads_per_block,
   int number_of_SMs,

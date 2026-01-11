@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
               devOutput, B.length,
               {copyA, copyB});
         }
-        catch(cl::sycl::exception const& e) {
+        catch(sycl::exception const& e) {
           std::cout << "\t\tCaught synchronous SYCL exception during GEMM:\n"
                     << e.what() << std::endl;
         }

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <cmath>
 #include <chrono>
 #include <sycl/sycl.hpp>
 
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
   reference(x, h_output, points);
   bool ok = true;
   for (int i = 0; i < points; i++) {
-    if (fabs(h_output[i] - output[i]) > 1e-6) {
+    if (std::fabs(h_output[i] - output[i]) > 1e-6) {
       printf("%lf %lf\n", h_output[i], output[i]);
       ok = false;
       break;

@@ -79,8 +79,25 @@ bool try_acquire_lock(uint32_t* nodeAddress, sycl::nd_item<1> &item) {
   return false;
 }
 
+// Count trailing zeros using builtin or manual implementation
+inline int __builtin_ctz_compat(int x) {
+#if defined(__SYCL_DEVICE_ONLY__)
+  // Device-side implementation for counting trailing zeros
+  if (x == 0) return 32;
+  int count = 0;
+  while ((x & 1) == 0) {
+    x >>= 1;
+    count++;
+  }
+  return count;
+#else
+  // Host-side can use builtin
+  return __builtin_ctz(x);
+#endif
+}
+
 inline int __ffs(int x) {
-  return (x == 0) ? 0 : sycl::ext::intel::ctz(x) + 1;
+  return (x == 0) ? 0 : __builtin_ctz_compat(x) + 1;
 }
 
 void acquire_lock(uint32_t* nodeAddress, sycl::nd_item<1> &item) {

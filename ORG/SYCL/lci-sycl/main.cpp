@@ -2,7 +2,7 @@
 #include <math.h>
 #include <chrono>
 #include <random>
-#include "../lci-cuda/tables.h"
+#include "../../CUDA/lci-cuda/tables.h"
 #include "kernels.h"
 #include <sycl/sycl.hpp>
 

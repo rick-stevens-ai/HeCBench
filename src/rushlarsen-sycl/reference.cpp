@@ -107,7 +107,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_xr1 = alpha_xr1*beta_xr1;
     const double dXr1_dt = (-Xr1 + xr1_inf)/tau_xr1;
     const double dXr1_dt_linearized = -1./tau_xr1;
-    states[n * STATE_Xr1 + i] = (std::fabs(dXr1_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_Xr1 + i] = (fabs(dXr1_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dXr1_dt_linearized))*dXr1_dt/dXr1_dt_linearized : dt*dXr1_dt)
       + Xr1;
 
@@ -118,7 +118,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_xr2 = alpha_xr2*beta_xr2;
     const double dXr2_dt = (-Xr2 + xr2_inf)/tau_xr2;
     const double dXr2_dt_linearized = -1./tau_xr2;
-    states[n * STATE_Xr2 + i] = (std::fabs(dXr2_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_Xr2 + i] = (fabs(dXr2_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dXr2_dt_linearized))*dXr2_dt/dXr2_dt_linearized : dt*dXr2_dt)
       + Xr2;
 
@@ -132,7 +132,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_xs = 80. + alpha_xs*beta_xs;
     const double dXs_dt = (-Xs + xs_inf)/tau_xs;
     const double dXs_dt_linearized = -1./tau_xs;
-    states[n * STATE_Xs + i] = (std::fabs(dXs_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_Xs + i] = (fabs(dXs_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dXs_dt_linearized))*dXs_dt/dXs_dt_linearized : dt*dXs_dt) +
       Xs;
 
@@ -149,7 +149,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_m = alpha_m*beta_m;
     const double dm_dt = (-m + m_inf)/tau_m;
     const double dm_dt_linearized = -1./tau_m;
-    states[n * STATE_m + i] = (std::fabs(dm_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_m + i] = (fabs(dm_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dm_dt_linearized))*dm_dt/dm_dt_linearized : dt*dm_dt) + m;
 
     // Expressions for the h gate component
@@ -164,7 +164,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_h = 1.0/(alpha_h + beta_h);
     const double dh_dt = (-h + h_inf)/tau_h;
     const double dh_dt_linearized = -1./tau_h;
-    states[n * STATE_h + i] = (std::fabs(dh_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_h + i] = (fabs(dh_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dh_dt_linearized))*dh_dt/dh_dt_linearized : dt*dh_dt) + h;
 
     // Expressions for the j gate component
@@ -180,14 +180,14 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_j = 1.0/(alpha_j + beta_j);
     const double dj_dt = (-j + j_inf)/tau_j;
     const double dj_dt_linearized = -1./tau_j;
-    states[n * STATE_j + i] = (std::fabs(dj_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_j + i] = (fabs(dj_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dj_dt_linearized))*dj_dt/dj_dt_linearized : dt*dj_dt) + j;
 
     // Expressions for the Sodium background current component
     const double i_b_Na = g_bna*(-E_Na + V);
 
     // Expressions for the L_type Ca current component
-    const double V_eff = (std::fabs(-15. + V) < 0.01 ? 0.01 : -15. + V);
+    const double V_eff = (fabs(-15. + V) < 0.01 ? 0.01 : -15. + V);
     const double i_CaL = 4.*g_CaL*(F*F)*(-Ca_o +
         0.25*Ca_ss*std::exp(2.*F*V_eff/(R*T)))*V_eff*d*f*f2*fCass/(R*T*(-1. +
           std::exp(2.*F*V_eff/(R*T))));
@@ -201,7 +201,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_d = alpha_d*beta_d + gamma_d;
     const double dd_dt = (-d + d_inf)/tau_d;
     const double dd_dt_linearized = -1./tau_d;
-    states[n * STATE_d + i] = (std::fabs(dd_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_d + i] = (fabs(dd_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dd_dt_linearized))*dd_dt/dd_dt_linearized : dt*dd_dt) + d;
 
     // Expressions for the f gate component
@@ -210,7 +210,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
         std::exp(13./10. - V/10.)) + 1102.5*std::exp(-((27. + V)*(27. + V))/225.);
     const double df_dt = (-f + f_inf)/tau_f;
     const double df_dt_linearized = -1./tau_f;
-    states[n * STATE_f + i] = (std::fabs(df_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_f + i] = (fabs(df_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*df_dt_linearized))*df_dt/df_dt_linearized : dt*df_dt) + f;
 
     // Expressions for the F2 gate component
@@ -219,7 +219,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
         std::exp(3. + V/10.)) + 562.*std::exp(-((27. + V)*(27. + V))/240.);
     const double df2_dt = (-f2 + f2_inf)/tau_f2;
     const double df2_dt_linearized = -1./tau_f2;
-    states[n * STATE_f2 + i] = (std::fabs(df2_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_f2 + i] = (fabs(df2_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*df2_dt_linearized))*df2_dt/df2_dt_linearized : dt*df2_dt) +
       f2;
 
@@ -228,7 +228,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_fCass = 2. + 80./(1. + 400.0*(Ca_ss*Ca_ss));
     const double dfCass_dt = (-fCass + fCass_inf)/tau_fCass;
     const double dfCass_dt_linearized = -1./tau_fCass;
-    states[n * STATE_fCass + i] = (std::fabs(dfCass_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_fCass + i] = (fabs(dfCass_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dfCass_dt_linearized))*dfCass_dt/dfCass_dt_linearized :
         dt*dfCass_dt) + fCass;
 
@@ -244,7 +244,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
       85.*std::exp(-((45. + V)*(45. + V))/320.);
     const double ds_dt = (-s + s_inf)/tau_s;
     const double ds_dt_linearized = -1./tau_s;
-    states[n * STATE_s + i] = (std::fabs(ds_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_s + i] = (fabs(ds_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*ds_dt_linearized))*ds_dt/ds_dt_linearized : dt*ds_dt) + s;
 
     // Expressions for the r gate component
@@ -252,7 +252,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double tau_r = 0.8 + 9.5*std::exp(-((40. + V)*(40. + V))/1800.);
     const double dr_dt = (-r + r_inf)/tau_r;
     const double dr_dt_linearized = -1./tau_r;
-    states[n * STATE_r + i] = (std::fabs(dr_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_r + i] = (fabs(dr_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dr_dt_linearized))*dr_dt/dr_dt_linearized : dt*dr_dt) + r;
 
     // Expressions for the Sodium potassium pump current component
@@ -303,7 +303,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
           di_up_dCa_i)/V_c - Cm*(-2.*di_NaCa_dCa_i - g_bca*dE_Ca_dCa_i +
             di_p_Ca_dCa_i)/(2.*F*V_c))*Ca_i_bufc + (V_sr*(-i_up + i_leak)/V_c -
             Cm*(-2.*i_NaCa + i_b_Ca + i_p_Ca)/(2.*F*V_c) + i_xfer)*dCa_i_bufc_dCa_i;
-    states[n * STATE_Ca_i + i] = Ca_i + (std::fabs(dCa_i_dt_linearized) > 1.0e-8 ?
+    states[n * STATE_Ca_i + i] = Ca_i + (fabs(dCa_i_dt_linearized) > 1.0e-8 ?
         (-1.0 + std::exp(dt*dCa_i_dt_linearized))*dCa_i_dt/dCa_i_dt_linearized :
         dt*dCa_i_dt);
     const double k1 = k1_prime/kcasr;
@@ -311,7 +311,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double O = (Ca_ss*Ca_ss)*R_prime*k1/(k3 + (Ca_ss*Ca_ss)*k1);
     const double dR_prime_dt = k4*(1. - R_prime) - Ca_ss*R_prime*k2;
     const double dR_prime_dt_linearized = -k4 - Ca_ss*k2;
-    states[n * STATE_R_prime + i] = (std::fabs(dR_prime_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_R_prime + i] = (fabs(dR_prime_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dR_prime_dt_linearized))*dR_prime_dt/dR_prime_dt_linearized :
         dt*dR_prime_dt) + R_prime;
     const double i_rel = V_rel*(-Ca_ss + Ca_SR)*O;
@@ -332,7 +332,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double dCa_SR_dt_linearized = (-V_leak - di_rel_dCa_SR -
         dO_dk1*di_rel_dO*dk1_dkcasr*dkcasr_dCa_SR)*Ca_sr_bufsr + (-i_leak - i_rel
           + i_up)*dCa_sr_bufsr_dCa_SR;
-    states[n * STATE_Ca_SR + i] = Ca_SR + (std::fabs(dCa_SR_dt_linearized) > 1.0e-8 ?
+    states[n * STATE_Ca_SR + i] = Ca_SR + (fabs(dCa_SR_dt_linearized) > 1.0e-8 ?
         (-1.0 + std::exp(dt*dCa_SR_dt_linearized))*dCa_SR_dt/dCa_SR_dt_linearized
         : dt*dCa_SR_dt);
     const double dCa_ss_dt = (V_sr*i_rel/V_ss - V_c*i_xfer/V_ss -
@@ -352,7 +352,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
           di_rel_dCa_ss)/V_ss - V_c*V_xfer/V_ss -
         Cm*di_CaL_dCa_ss/(2.*F*V_ss))*Ca_ss_bufss + (V_sr*i_rel/V_ss -
         V_c*i_xfer/V_ss - Cm*i_CaL/(2.*F*V_ss))*dCa_ss_bufss_dCa_ss;
-    states[n * STATE_Ca_ss + i] = Ca_ss + (std::fabs(dCa_ss_dt_linearized) > 1.0e-8 ?
+    states[n * STATE_Ca_ss + i] = Ca_ss + (fabs(dCa_ss_dt_linearized) > 1.0e-8 ?
         (-1.0 + std::exp(dt*dCa_ss_dt_linearized))*dCa_ss_dt/dCa_ss_dt_linearized
         : dt*dCa_ss_dt);
 
@@ -370,7 +370,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
             0.0353*std::exp(-F*V/(R*T)) + 0.1245*std::exp(-0.1*F*V/(R*T))));
     const double dNa_i_dt_linearized = Cm*(-3.*di_NaCa_dNa_i - 3.*di_NaK_dNa_i
         + g_bna*dE_Na_dNa_i - dE_Na_dNa_i*di_Na_dE_Na)/(F*V_c);
-    states[n * STATE_Na_i + i] = Na_i + (std::fabs(dNa_i_dt_linearized) > 1.0e-8 ?
+    states[n * STATE_Na_i + i] = Na_i + (fabs(dNa_i_dt_linearized) > 1.0e-8 ?
         (-1.0 + std::exp(dt*dNa_i_dt_linearized))*dNa_i_dt/dNa_i_dt_linearized :
         dt*dNa_i_dt);
 
@@ -410,7 +410,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
     const double di_K1_dV = 0.430331482911935*g_K1*std::sqrt(K_o)*xK1_inf +
       0.430331482911935*g_K1*std::sqrt(K_o)*(-E_K +
           V)*(dalpha_K1_dV*dxK1_inf_dalpha_K1 + dbeta_K1_dV*dxK1_inf_dbeta_K1);
-    const double dV_eff_dV = (std::fabs(-15. + V) < 0.01 ? 0. : 1.);
+    const double dV_eff_dV = (fabs(-15. + V) < 0.01 ? 0. : 1.);
     const double di_Na_dV = g_Na*(m*m*m)*h*j;
     const double di_Kr_dV = 0.430331482911935*g_Kr*std::sqrt(K_o)*Xr1*Xr2;
     const double di_NaK_dV = K_o*P_NaK*(0.0353*F*std::exp(-F*V/(R*T))/(R*T) +
@@ -436,7 +436,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
       di_Ks_dV - di_NaCa_dV - di_NaK_dV - di_Na_dV - di_p_K_dV - di_to_dV -
       (dalpha_K1_dV*dxK1_inf_dalpha_K1 +
        dbeta_K1_dV*dxK1_inf_dbeta_K1)*di_K1_dxK1_inf - dV_eff_dV*di_CaL_dV_eff;
-    states[n * STATE_V + i] = (std::fabs(dV_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_V + i] = (fabs(dV_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dV_dt_linearized))*dV_dt/dV_dt_linearized : dt*dV_dt) + V;
 
     // Expressions for the Potassium dynamics component
@@ -466,7 +466,7 @@ void forward_rush_larsen(double* states, const double t, const double dt,
             dE_K_dK_i*dbeta_K1_dE_K*dxK1_inf_dbeta_K1)*di_K1_dxK1_inf -
           dE_K_dK_i*di_K1_dE_K - dE_K_dK_i*di_Kr_dE_K - dE_K_dK_i*di_p_K_dE_K -
           dE_K_dK_i*di_to_dE_K - dE_Ks_dK_i*di_Ks_dE_Ks)/(F*V_c);
-    states[n * STATE_K_i + i] = K_i + (std::fabs(dK_i_dt_linearized) > 1.0e-8 ? (-1.0 +
+    states[n * STATE_K_i + i] = K_i + (fabs(dK_i_dt_linearized) > 1.0e-8 ? (-1.0 +
           std::exp(dt*dK_i_dt_linearized))*dK_i_dt/dK_i_dt_linearized : dt*dK_i_dt);
   }
 }

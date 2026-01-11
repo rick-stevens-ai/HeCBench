@@ -42,6 +42,7 @@
 #include <memory.h>
 #include <math.h>
 #include <iostream>
+#include <sycl/sycl.hpp>
 
 //#include <helper_cuda.h>
 
@@ -76,18 +77,24 @@ inline void Swap(T &a, T &b) {
 }
 
 #ifndef checkCudaErrors
-#define checkCudaErrors(err)  __checkCudaErrors (err, __FILE__, __LINE__)
-
-// These are the inline versions for all of the SDK helper functions
-inline void __checkCudaErrors(cudaError_t err, const char *file, const int line)
-{   
-  if (cudaSuccess != err)
-  {   
-    std::cerr << "CUDA Error = " << err << ": " << cudaGetErrorString(err) << " from file "
-              << file  << ", line " << line << std::endl;
-  }
-}
+#define checkCudaErrors(err)  // SYCL version: no-op
 #endif
+
+#ifndef CHECK_ERROR
+#define CHECK_ERROR(expr) expr  // SYCL version: simple pass-through
+#endif
+
+// SDK helper function wrappers
+#include "shrUtils.h"
+
+inline char* sdkFindFilePath(const char* filename, const char* executable_path) {
+  return shrFindFilePath(filename, executable_path);
+}
+
+inline bool sdkLoadPPM4ub(const char* file, unsigned char** data,
+                          unsigned int *w, unsigned int *h) {
+  return shrLoadPPM4ub(file, data, w, h) != 0;
+}
 
 //Note: N must be a power of two
 #endif

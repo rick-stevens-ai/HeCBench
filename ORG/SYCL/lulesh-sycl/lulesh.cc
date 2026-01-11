@@ -156,6 +156,6 @@ void Domain::CalcTimeConstraintsForElems()
         }
     }
 
-    m_dtcourant = Real_t(0.7) * sqrt(m_dtcourant);
+    m_dtcourant = Real_t(0.7) * sycl::sqrt(m_dtcourant);
     m_dthydro = Real_t(0.7) * m_dthydro;
 }

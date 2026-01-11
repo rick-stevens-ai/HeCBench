@@ -14,8 +14,6 @@ CUDA_ARCH = sm_70
 HIP       = no
 HIP_ARCH  = gfx908
 #GCC_TOOLCHAIN = "/auto/software/gcc/x86_64/gcc-9.1.0/"
-OPENMP_INCLUDE = /path/to/openmp/include
-OPENMP_LIB = /path/to/openmp/lib
 
 #===============================================================================
 # Program name & source code list
@@ -34,8 +32,7 @@ obj = $(source:.cpp=.o)
 # Standard Flags
 CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall \
           --gcc-toolchain=$(GCC_TOOLCHAIN) \
-          -Isrc -I$(OPENMP_INCLUDE) \
-          -fopenmp -fsycl
+          -Isrc -qopenmp -fsycl
 
 ifeq ($(VENDOR), AdaptiveCpp)
     CFLAGS_TMP := $(CFLAGS)
@@ -43,7 +40,7 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = -L$(OPENMP_LIB) -lomp
+LDFLAGS =
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \

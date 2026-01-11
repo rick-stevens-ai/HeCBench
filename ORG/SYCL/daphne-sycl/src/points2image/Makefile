@@ -77,7 +77,7 @@ all: $(program) checkdata
 $(program): $(obj)
 	$(CC) $(CFLAGS) $(obj) -o $@ $(LDFLAGS)
 
-kernel.o: kernel.cpp $(SHARED_SRC_PATH)/points2image/datatypes.h \
+kernel.o: kernel.cpp ../include/datatypes.h \
           ../include/benchmark.h
 	$(CC) $(CFLAGS) -c $< -o $@
 

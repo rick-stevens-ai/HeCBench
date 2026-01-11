@@ -8,7 +8,7 @@ const float THRESHOLD = 0.05f;
 #include "flowGold.h"
 #include "flowSYCL.h"
 
-#include "helper_functions.h"
+// #include "helper_functions.h"  // Not needed for SYCL version
 #include <cmath>
 #include <chrono>
 

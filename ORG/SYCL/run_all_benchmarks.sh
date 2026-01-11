@@ -1,117 +1,167 @@
 #!/bin/bash
 
-# Handle interrupts
-trap 'echo -e "\n\nScript interrupted. Progress saved."; exit 1' INT TERM
+# Comprehensive Benchmark Test Runner
+# Tests all compiled SYCL benchmarks for correctness
 
-# Initialize or read state
-STATE_FILE="benchmark_state.txt"
-if [ -f "$STATE_FILE" ]; then
-    COMPLETED=($(cat "$STATE_FILE"))
-else
-    COMPLETED=()
-fi
+source /opt/intel/oneapi/setvars.sh --force > /dev/null 2>&1
+cd /home/stevens/HeCBench/ORG/SYCL
 
-# Initialize files
-> working.txt
-> failed.txt
-> benchmark_summary.txt
-> build_errors.log
+# Create results directories
+mkdir -p test_results/logs
+mkdir -p test_results/crashes
 
-# Initialize counters
-success_count=0
-fail_count=0
+# Result counters
+TOTAL=0
+PASSED=0
+FAILED=0
+CRASHED=0
+NO_DATA=0
 
-# Get total number of benchmarks
-total=$(wc -l < sycl_benchmarks.txt)
-current=0
+# Result log
+RESULT_FILE="test_results/benchmark_results.txt"
+SUMMARY_FILE="test_results/SUMMARY.md"
 
-# Function to print progress
-print_progress() {
-    current=$1
-    percentage=$(( (current * 100) / total ))
-    printf "\rProgress: %d/%d (%d%%) - Success: %d, Failed: %d - %s" $current $total $percentage $success_count $fail_count "$(date '+%H:%M:%S')"
-}
+echo "SYCL Benchmark Test Suite" > $RESULT_FILE
+echo "=========================" >> $RESULT_FILE
+echo "Start Time: $(date)" >> $RESULT_FILE
+echo "" >> $RESULT_FILE
 
-# Function to log summary
-log_summary() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1: $2 - $3" >> benchmark_summary.txt
-}
+echo "Testing all compiled SYCL benchmarks..."
+echo ""
 
-# Read benchmarks line by line
-while IFS= read -r benchmark; do
-    current=$((current + 1))
-
-    # Skip if already completed
-    if [[ " ${COMPLETED[@]} " =~ " ${benchmark} " ]]; then
-        print_progress $current
-        continue
-    fi
-
-    print_progress $current
-    echo -e "\n\nTesting: $benchmark"
+# Find all benchmarks with compiled main executable
+for bench in *-sycl; do
+  if [ -d "$bench" ] && [ -f "$bench/main" ]; then
+    ((TOTAL++))
+    bench_name=$(basename "$bench")
     
-    # Change to benchmark directory
-    cd "$benchmark" 2>/dev/null
-    if [ $? -ne 0 ]; then
-        echo "$benchmark" >> ../failed.txt
-        log_summary "$benchmark" "FAILED" "Directory access failed"
-        echo "Failed to enter directory"
-        ((fail_count++))
-        cd ..
-        continue
-    fi
-
-    # Update Makefile if necessary
-    if [ -f Makefile ]; then
-        sed -i 's/CC.*=.*clang++/CC        = icpx/' Makefile 2>/dev/null
-    fi
-
-    # Try to build
-    make clean >/dev/null 2>&1
-    echo "=== Build Output for $benchmark ===" >> ../build_errors.log
-    if ! make 2>> ../build_errors.log; then
-        echo "$benchmark" >> ../failed.txt
-        log_summary "$benchmark" "FAILED" "Build failed (see build_errors.log)"
-        echo "Build failed"
-        ((fail_count++))
-        cd ..
-        COMPLETED+=("$benchmark")
-        echo "${COMPLETED[@]}" > "../$STATE_FILE"
-        continue
-    fi
-
-    # Try to run
-    timeout 30s ./main >../build_errors.log 2>&1
-    run_status=$?
+    echo -n "Testing $bench_name ... "
     
-    if [ $run_status -eq 0 ]; then
-        echo "$benchmark" >> ../working.txt
-        log_summary "$benchmark" "SUCCESS" "Build and run successful"
-        echo "Success"
-        ((success_count++))
+    cd "$bench"
+    
+    # Run with timeout (30 seconds per benchmark)
+    # Try with default parameters first
+    timeout 30s ./main 1 > "../test_results/logs/${bench_name}.log" 2>&1
+    exit_code=$?
+    
+    # Check results
+    if [ $exit_code -eq 124 ]; then
+      # Timeout
+      echo "TIMEOUT"
+      echo "$bench_name: TIMEOUT" >> "../$RESULT_FILE"
+      ((CRASHED++))
+    elif [ $exit_code -ne 0 ]; then
+      # Non-zero exit (crash or error)
+      echo "CRASHED (exit $exit_code)"
+      echo "$bench_name: CRASHED (exit code $exit_code)" >> "../$RESULT_FILE"
+      cp "../test_results/logs/${bench_name}.log" "../test_results/crashes/${bench_name}_crash.log"
+      ((CRASHED++))
     else
-        echo "$benchmark" >> ../failed.txt
-        if [ $run_status -eq 124 ]; then
-            log_summary "$benchmark" "FAILED" "Timeout after 30s"
-            echo "Run timed out"
+      # Check output for PASS/FAIL
+      if grep -qi "PASS" "../test_results/logs/${bench_name}.log"; then
+        echo "✓ PASS"
+        echo "$bench_name: PASS" >> "../$RESULT_FILE"
+        ((PASSED++))
+      elif grep -qi "FAIL" "../test_results/logs/${bench_name}.log"; then
+        echo "✗ FAIL"
+        echo "$bench_name: FAIL" >> "../$RESULT_FILE"
+        ((FAILED++))
+      else
+        # No explicit PASS/FAIL, check for errors
+        if grep -qi "error\|exception\|segmentation" "../test_results/logs/${bench_name}.log"; then
+          echo "✗ ERROR"
+          echo "$bench_name: ERROR (no explicit result)" >> "../$RESULT_FILE"
+          ((FAILED++))
         else
-            log_summary "$benchmark" "FAILED" "Run failed with status $run_status"
-            echo "Run failed"
+          echo "? NO_DATA (completed)"
+          echo "$bench_name: NO_DATA (completed successfully, no PASS/FAIL)" >> "../$RESULT_FILE"
+          ((NO_DATA++))
         fi
-        ((fail_count++))
+      fi
     fi
-
+    
     cd ..
-    COMPLETED+=("$benchmark")
-    echo "${COMPLETED[@]}" > "$STATE_FILE"
-done < sycl_benchmarks.txt
+    
+    # Progress indicator every 50 benchmarks
+    if [ $((TOTAL % 50)) -eq 0 ]; then
+      echo ""
+      echo "Progress: $TOTAL tested, $PASSED passed, $FAILED failed, $CRASHED crashed"
+      echo ""
+    fi
+  fi
+done
 
-echo -e "\n\nTesting completed!"
-echo "Working benchmarks: $success_count"
-echo "Failed benchmarks: $fail_count"
-echo "Success rate: $(( (success_count * 100) / (success_count + fail_count) ))%"
-echo "Detailed summary available in benchmark_summary.txt"
-echo "Build errors available in build_errors.log"
+# Generate summary
+echo "" >> $RESULT_FILE
+echo "=========================" >> $RESULT_FILE
+echo "Test Summary" >> $RESULT_FILE
+echo "=========================" >> $RESULT_FILE
+echo "Total Benchmarks: $TOTAL" >> $RESULT_FILE
+echo "Passed: $PASSED" >> $RESULT_FILE
+echo "Failed: $FAILED" >> $RESULT_FILE
+echo "Crashed: $CRASHED" >> $RESULT_FILE
+echo "No Data: $NO_DATA" >> $RESULT_FILE
+echo "" >> $RESULT_FILE
+echo "End Time: $(date)" >> $RESULT_FILE
 
-# Clean up state file if completed successfully
-rm -f "$STATE_FILE"
+# Display summary
+echo ""
+echo "========================================="
+echo "Benchmark Test Results"
+echo "========================================="
+echo "Total Benchmarks Tested: $TOTAL"
+echo "✓ Passed: $PASSED ($(echo "scale=1; $PASSED*100/$TOTAL" | bc)%)"
+echo "✗ Failed: $FAILED ($(echo "scale=1; $FAILED*100/$TOTAL" | bc)%)"
+echo "☠ Crashed: $CRASHED ($(echo "scale=1; $CRASHED*100/$TOTAL" | bc)%)"
+echo "? No Data: $NO_DATA ($(echo "scale=1; $NO_DATA*100/$TOTAL" | bc)%)"
+echo "========================================="
+echo ""
+echo "Detailed results: test_results/benchmark_results.txt"
+echo "Individual logs: test_results/logs/"
+echo "Crash logs: test_results/crashes/"
+
+# Create markdown summary
+cat > $SUMMARY_FILE << SUMMARY
+# SYCL Benchmark Test Results
+
+**Date:** $(date)  
+**Total Benchmarks Tested:** $TOTAL / 414 expected
+
+## Summary
+
+| Status | Count | Percentage |
+|--------|-------|------------|
+| ✓ Passed | $PASSED | $(echo "scale=1; $PASSED*100/$TOTAL" | bc)% |
+| ✗ Failed | $FAILED | $(echo "scale=1; $FAILED*100/$TOTAL" | bc)% |
+| ☠ Crashed | $CRASHED | $(echo "scale=1; $CRASHED*100/$TOTAL" | bc)% |
+| ? No Data | $NO_DATA | $(echo "scale=1; $NO_DATA*100/$TOTAL" | bc)% |
+
+## Result Categories
+
+### ✓ PASS ($PASSED benchmarks)
+Benchmarks that explicitly output "PASS" and completed successfully.
+
+### ✗ FAIL ($FAILED benchmarks)
+Benchmarks that explicitly output "FAIL" or had runtime errors.
+
+### ☠ CRASH ($CRASHED benchmarks)
+Benchmarks that crashed, segfaulted, or timed out (>30s).
+
+### ? NO_DATA ($NO_DATA benchmarks)
+Benchmarks that completed without errors but didn't output PASS/FAIL.
+
+## Files Generated
+- \`benchmark_results.txt\` - Complete results list
+- \`logs/\` - Individual benchmark output logs (all $TOTAL benchmarks)
+- \`crashes/\` - Crash logs for failed benchmarks
+
+---
+
+**Note:** Some benchmarks may require specific input data files or GPU capabilities.
+Benchmarks marked "NO_DATA" likely completed successfully but don't have explicit
+validation output. Manual inspection recommended for critical benchmarks.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+SUMMARY
+
+echo "Summary report created: test_results/SUMMARY.md"

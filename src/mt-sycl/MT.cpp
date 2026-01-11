@@ -16,6 +16,7 @@
 
 // standard utilities and systems includes
 #include <stdio.h>
+#include <cmath>
 #include "MT.h"
 #include <sycl/sycl.hpp>
 

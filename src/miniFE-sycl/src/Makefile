@@ -11,8 +11,8 @@ MINIFE_TYPES =  \
 MINIFE_MATRIX_TYPE = -DMINIFE_CSR_MATRIX
 
 #-----------------------------------------------------------------------
-CXX       = clang++
-CC        = clang++
+CXX       = icpx
+CC        = icpx
 OPTIMIZE  = yes
 DEBUG     = no
 GPU       = yes

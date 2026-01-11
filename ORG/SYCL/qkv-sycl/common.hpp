@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sycl/sycl.hpp>
+#include <oneapi/dnnl/dnnl_sycl.hpp>
 
 // Setup engine and stream in DNNL
 sycl::queue q;

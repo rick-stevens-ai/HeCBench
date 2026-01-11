@@ -77,6 +77,23 @@ public:
    Real_t& ydd(Index_t idx)    { return m_ydd[idx] ; }
    Real_t& zdd(Index_t idx)    { return m_zdd[idx] ; }
 
+   // Const versions for const Domain
+   const Real_t& e(Index_t idx) const   { return m_e[idx] ; }
+   const Real_t& x(Index_t idx) const   { return m_x[idx] ; }
+   const Real_t& y(Index_t idx) const   { return m_y[idx] ; }
+   const Real_t& z(Index_t idx) const   { return m_z[idx] ; }
+   const Real_t& fx(Index_t idx) const  { return m_fx[idx] ; }
+   const Real_t& fy(Index_t idx) const  { return m_fy[idx] ; }
+   const Real_t& fz(Index_t idx) const  { return m_fz[idx] ; }
+
+   const Real_t& xd(Index_t idx) const  { return m_xd[idx] ; }
+   const Real_t& yd(Index_t idx) const  { return m_yd[idx] ; }
+   const Real_t& zd(Index_t idx) const  { return m_zd[idx] ; }
+
+   const Real_t& xdd(Index_t idx) const { return m_xdd[idx] ; }
+   const Real_t& ydd(Index_t idx) const { return m_ydd[idx] ; }
+   const Real_t& zdd(Index_t idx) const { return m_zdd[idx] ; }
+
    Real_t& nodalMass(Index_t idx) { return m_nodalMass[idx] ; }
 
    Index_t& symmX(Index_t idx) { return m_symmX[idx] ; }
@@ -87,14 +104,6 @@ public:
    Real_t& delx_xi(Index_t idx)    { return m_delx_xi[idx] ; }
    Real_t& delx_eta(Index_t idx)   { return m_delx_eta[idx] ; }
    Real_t& delx_zeta(Index_t idx)  { return m_delx_zeta[idx] ; }
-
-   Real_t& dely_xi(Index_t idx)    { return m_dely_xi[idx] ; }
-   Real_t& dely_eta(Index_t idx)   { return m_dely_eta[idx] ; }
-   Real_t& dely_zeta(Index_t idx)  { return m_dely_zeta[idx] ; }
-
-   Real_t& delz_xi(Index_t idx)    { return m_delz_xi[idx] ; }
-   Real_t& delz_eta(Index_t idx)   { return m_delz_eta[idx] ; }
-   Real_t& delz_zeta(Index_t idx)  { return m_delz_zeta[idx] ; }
 
    Real_t& vdov(Index_t idx)       { return m_vdov[idx] ; }
    Real_t& p(Index_t idx)          { return m_p[idx] ; }
@@ -260,21 +269,6 @@ struct cmdLineOpts {
 
 // Utility functions
 void PrintSYCLInfo(const Domain& domain);
-void DumpMeshMetadata(const Domain& domain, const char *meshName);
-struct cmdLineOpts {
-   Int_t its;           // -i
-   Int_t nx;           // -s
-   Int_t numReg;       // -r
-   Int_t numFiles;     // -f
-   Int_t showProg;     // -p
-   Int_t quiet;        // -q
-   Int_t viz;          // -v
-   Int_t cost;         // -c
-   Int_t balance;      // -b
-   Int_t iteration_cap;
-};
-
-// Utility functions
 void DumpMeshMetadata(const Domain& domain, const char *meshName);
 void DumpMeshCoordinates(const Domain& domain, const char *label);
 void DumpMeshVelocities(const Domain& domain, const char *label);

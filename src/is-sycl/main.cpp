@@ -142,27 +142,27 @@ int main(int argc, char** argv){
   amount_of_work_on_full_verify_2=NUM_KEYS;
   amount_of_work_on_full_verify_3=NUM_KEYS;
 
-  blocks_per_grid_on_create_seq=(ceil((double)(amount_of_work_on_create_seq)/(double)(threads_per_block_on_create_seq)));
+  blocks_per_grid_on_create_seq=(sycl::ceil((double)(amount_of_work_on_create_seq)/(double)(threads_per_block_on_create_seq)));
 
   blocks_per_grid_on_rank_1=1;
 
-  blocks_per_grid_on_rank_2=(ceil((double)(amount_of_work_on_rank_2)/(double)(threads_per_block_on_rank_2)));
+  blocks_per_grid_on_rank_2=(sycl::ceil((double)(amount_of_work_on_rank_2)/(double)(threads_per_block_on_rank_2)));
 
-  blocks_per_grid_on_rank_3=(ceil((double)(amount_of_work_on_rank_3)/(double)(threads_per_block_on_rank_3)));
+  blocks_per_grid_on_rank_3=(sycl::ceil((double)(amount_of_work_on_rank_3)/(double)(threads_per_block_on_rank_3)));
 
   if(amount_of_work_on_rank_4 > MAX_KEY){amount_of_work_on_rank_4=MAX_KEY;}
-  blocks_per_grid_on_rank_4=(ceil((double)(amount_of_work_on_rank_4)/(double)(threads_per_block_on_rank_4)));
+  blocks_per_grid_on_rank_4=(sycl::ceil((double)(amount_of_work_on_rank_4)/(double)(threads_per_block_on_rank_4)));
 
   blocks_per_grid_on_rank_5=1;
 
   if(amount_of_work_on_rank_6 > MAX_KEY){amount_of_work_on_rank_6=MAX_KEY;}
-  blocks_per_grid_on_rank_6=(ceil((double)(amount_of_work_on_rank_6)/(double)(threads_per_block_on_rank_6)));
+  blocks_per_grid_on_rank_6=(sycl::ceil((double)(amount_of_work_on_rank_6)/(double)(threads_per_block_on_rank_6)));
 
   blocks_per_grid_on_rank_7=1;
 
-  blocks_per_grid_on_full_verify_1=(ceil((double)(amount_of_work_on_full_verify_1)/(double)(threads_per_block_on_full_verify_1)));
-  blocks_per_grid_on_full_verify_2=(ceil((double)(amount_of_work_on_full_verify_2)/(double)(threads_per_block_on_full_verify_2)));
-  blocks_per_grid_on_full_verify_3=(ceil((double)(amount_of_work_on_full_verify_3)/(double)(threads_per_block_on_full_verify_3)));
+  blocks_per_grid_on_full_verify_1=(sycl::ceil((double)(amount_of_work_on_full_verify_1)/(double)(threads_per_block_on_full_verify_1)));
+  blocks_per_grid_on_full_verify_2=(sycl::ceil((double)(amount_of_work_on_full_verify_2)/(double)(threads_per_block_on_full_verify_2)));
+  blocks_per_grid_on_full_verify_3=(sycl::ceil((double)(amount_of_work_on_full_verify_3)/(double)(threads_per_block_on_full_verify_3)));
 
   size_shared_data_on_rank_4=2*threads_per_block_on_rank_4;
   size_shared_data_on_rank_5=2*threads_per_block_on_rank_5;
