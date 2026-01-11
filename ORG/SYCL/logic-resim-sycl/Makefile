@@ -11,3 +11,6 @@ all:
 
 clean:
 	cd Simulation && $(MAKE) clean
+
+run: all
+	$(LAUNCHER) ./Simulation/main

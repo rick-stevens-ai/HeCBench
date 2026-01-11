@@ -11,3 +11,6 @@ all:
 
 clean:
 	cd src && $(MAKE) clean
+
+run: all
+	$(LAUNCHER) ./src/main

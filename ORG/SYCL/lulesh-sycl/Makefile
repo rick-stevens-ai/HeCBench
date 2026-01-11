@@ -38,5 +38,8 @@ clean:
 	/bin/rm -rf *.optrpt
 	/bin/rm -rf core.*
 
+run: $(LULESH_EXEC)
+	./$(LULESH_EXEC) -s 100
+
 tar: clean
 	cd .. ; tar cvf lulesh-2.0.tar LULESH-2.0 ; cd LULESH-2.0

@@ -11,3 +11,6 @@ all:
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+run: all
+	$(LAUNCHER) ./$(BUILD_DIR)/main

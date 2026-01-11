@@ -12,3 +12,6 @@ all:
 
 clean:
 	cd src && $(MAKE) clean
+
+run: all
+	$(LAUNCHER) ./src/miniFE.x
