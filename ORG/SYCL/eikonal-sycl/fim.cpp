@@ -35,7 +35,7 @@ void runEikonalSolverSimple(sycl::queue &q, GPUMEMSTRUCT &cmem)
   int nIter = cmem.nIter;
   uint nActiveBlock = cmem.nActiveBlock; // active list
 
-  double *d_spd = cmem.d_spd;
+  DOUBLE *d_spd = cmem.d_spd;
   DOUBLE *d_sol = cmem.d_sol;
   DOUBLE *t_sol = cmem.t_sol;
 

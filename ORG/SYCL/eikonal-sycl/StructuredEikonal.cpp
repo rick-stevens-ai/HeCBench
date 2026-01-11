@@ -17,13 +17,13 @@ void StructuredEikonal::writeNRRD(std::string filename) {
   out << "sizes: " << this->width_ << " " << this->height_ << " " << this->depth_ << "\n";
   out << "endian: little\n";
   out << "encoding: raw\n\n";
-  double checksum = 0.0;
+  DOUBLE checksum = 0.0;
   for(size_t k = 0; k < this->depth_; k++) {
     for(size_t j = 0; j < this->height_; j++) {
       for(size_t i = 0; i < this->width_; i++) {
-        double d = this->answer_[i][j][k];
+        DOUBLE d = this->answer_[i][j][k];
         checksum += d;
-        out.write(reinterpret_cast<const char*>(&d),sizeof(double));
+        out.write(reinterpret_cast<const char*>(&d),sizeof(DOUBLE));
       }
     }
   }
@@ -103,7 +103,7 @@ void StructuredEikonal::init_device_mem() {
   //
   // create host/device memory
   //
-  this->memoryStruct_.d_spd = sycl::malloc_device<double>(volSize, q);
+  this->memoryStruct_.d_spd = sycl::malloc_device<DOUBLE>(volSize, q);
 
   this->memoryStruct_.d_sol = sycl::malloc_device<DOUBLE>(volSize, q);
 
@@ -129,7 +129,7 @@ void StructuredEikonal::set_attribute_mask() {
   blklength = memoryStruct_.blklength;
 
   // create host memory
-  double *h_spd  = new double[volSize]; // byte speed, host
+  DOUBLE *h_spd  = new DOUBLE[volSize]; // byte speed, host
   bool  *h_mask = new bool[volSize];
 
   // copy input volume to host memory
@@ -153,7 +153,7 @@ void StructuredEikonal::set_attribute_mask() {
   }
 
   // initialize GPU memory with host memory
-  q.memcpy(memoryStruct_.d_spd, h_spd, volSize*sizeof(double));
+  q.memcpy(memoryStruct_.d_spd, h_spd, volSize*sizeof(DOUBLE));
   q.memcpy(memoryStruct_.d_mask, h_mask, volSize*sizeof(bool));
   q.wait();
 
@@ -167,10 +167,10 @@ void StructuredEikonal::initialization() {
 }
 
 void StructuredEikonal::map_generator() {
-  double pi = 3.141592653589793238462643383;
-  this->speeds_ = std::vector<std::vector<std::vector<double> > >(
-    this->width_, std::vector<std::vector<double> >(
-    this->height_, std::vector<double>(this->depth_,1.)));
+  DOUBLE pi = 3.141592653589793238462643383;
+  this->speeds_ = std::vector<std::vector<std::vector<DOUBLE> > >(
+    this->width_, std::vector<std::vector<DOUBLE> >(
+    this->height_, std::vector<DOUBLE>(this->depth_,1.)));
   switch(this->solverType_){
   case 0 :
     //Constant Speed Map
@@ -294,7 +294,7 @@ void StructuredEikonal::solveEikonal() {
   this->get_solution();
 }
 
-std::vector< std::vector< std::vector<double> > > 
+std::vector< std::vector< std::vector<DOUBLE> > >
   StructuredEikonal::getFinalResult() {
     return this->answer_;
   }
@@ -305,9 +305,9 @@ void StructuredEikonal::get_solution() {
     this->memoryStruct_.d_sol, this->memoryStruct_.volsize*sizeof(DOUBLE)).wait();
 
   //put the data where it belongs in the grand scheme of data!
-  this->answer_ = std::vector<std::vector<std::vector<double> > >(
-    this->width_, std::vector<std::vector<double> >( 
-    this->height_, std::vector<double>(this->depth_,0)));
+  this->answer_ = std::vector<std::vector<std::vector<DOUBLE> > >(
+    this->width_, std::vector<std::vector<DOUBLE> >(
+    this->height_, std::vector<DOUBLE>(this->depth_,0)));
   for(size_t blockID = 0; blockID < this->memoryStruct_.blknum; blockID++) {
     size_t baseAddr = blockID * this->memoryStruct_.blksize;
 		size_t xgridlength = this->memoryStruct_.xdim/BLOCK_LENGTH;
@@ -321,8 +321,8 @@ void StructuredEikonal::get_solution() {
     for(int k = 0; k < BLOCK_LENGTH; k++) {
       for(int j = 0; j < BLOCK_LENGTH; j++) {
         for(int i = 0; i < BLOCK_LENGTH; i++) {
-          double d = this->memoryStruct_.h_sol[baseAddr + 
-            k * BLOCK_LENGTH * BLOCK_LENGTH + 
+          DOUBLE d = this->memoryStruct_.h_sol[baseAddr +
+            k * BLOCK_LENGTH * BLOCK_LENGTH +
             j * BLOCK_LENGTH + i];
           if ((i + bx * BLOCK_LENGTH) < this->width_ && 
             (j + by * BLOCK_LENGTH) < this->height_ &&

@@ -22,9 +22,6 @@
 //
 // common definition for Eikonal solvers
 //
-#ifndef INF
-#define INF 1e20//FLT_MAX //
-#endif
 
 #define BLOCK_LENGTH 4
 
@@ -32,11 +29,17 @@
 
 #define DOUBLE double
 #define EPS (DOUBLE)1e-16
+#ifndef INF
+#define INF 1e20
+#endif
 
 #else
 
 #define DOUBLE float
 #define EPS (DOUBLE)1e-6
+#ifndef INF
+#define INF 1e20f
+#endif
 
 #endif
 
@@ -61,7 +64,7 @@ struct GPU_MEM_STRUCTURE {
 
   // device memory
   uint *d_list;
-  double *d_spd;
+  DOUBLE *d_spd;
   bool *d_mask, *d_listVol, *d_con;  
 
   DOUBLE *h_sol;

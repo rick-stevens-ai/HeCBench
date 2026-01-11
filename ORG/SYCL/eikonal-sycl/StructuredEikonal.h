@@ -16,10 +16,10 @@ public:
   void setDims(size_t w, size_t h, size_t d);
   void setMapType(size_t t);
   void setItersPerBlock(size_t t);
-  void setSpeeds(std::vector<std::vector<std::vector<double> > > speed);
+  void setSpeeds(std::vector<std::vector<std::vector<DOUBLE> > > speed);
   void setSeeds(std::vector<std::array<size_t, 3> > seeds);
   void writeNRRD(std::string filename);
-  std::vector< std::vector< std::vector<double> > > getFinalResult();
+  std::vector< std::vector< std::vector<DOUBLE> > > getFinalResult();
   /**
   * Runs the algorithm.
   *
@@ -28,7 +28,7 @@ public:
   */
   void solveEikonal();
   //public member for answer
-  std::vector<std::vector<std::vector<double> > > answer_;
+  std::vector<std::vector<std::vector<DOUBLE> > > answer_;
 private:
   void error(char* msg);
   void init_device_mem();
@@ -42,7 +42,7 @@ private:
   bool isGpuMemCreated_;
   size_t width_, height_, depth_;
   size_t itersPerBlock_, solverType_;
-  std::vector<std::vector<std::vector<double> > > speeds_;
+  std::vector<std::vector<std::vector<DOUBLE> > > speeds_;
   std::vector<std::array<size_t, 3> > seeds_;
   GPUMEMSTRUCT memoryStruct_;
   sycl::queue q;

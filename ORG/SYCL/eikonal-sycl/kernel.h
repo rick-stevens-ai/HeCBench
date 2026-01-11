@@ -26,7 +26,7 @@ DOUBLE get_time_eikonal(DOUBLE a, DOUBLE b, DOUBLE c, DOUBLE s);
 SYCL_EXTERNAL
 void run_solver(
   sycl::nd_item<3> &item,
-  const double*__restrict__ spd,
+  const DOUBLE*__restrict__ spd,
   const bool*__restrict__ mask,
   const DOUBLE *__restrict__ sol_in,
   DOUBLE *__restrict__ sol_out,
@@ -54,7 +54,7 @@ void run_reduction(
 SYCL_EXTERNAL
 void run_check_neighbor(
   sycl::nd_item<3> &item,
-  const double*__restrict__ spd,
+  const DOUBLE*__restrict__ spd,
   const bool*__restrict__ mask,
   const DOUBLE *__restrict__ sol_in,
   DOUBLE *__restrict__ sol_out,

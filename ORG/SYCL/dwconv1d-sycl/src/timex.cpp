@@ -1,23 +1,15 @@
 #include <stdio.h>
 #include <sycl/sycl.hpp>
-#include <xpu/Macros.h>
-#include <xpu/Stream.h>
-#include <c10/core/Device.h>
-#include <c10/core/DeviceGuard.h>
-#include <c10/core/Stream.h>
-#include <c10/core/StreamGuard.h>
+#include "xpu_stubs.h"
 
 
 // require T <= Tmax, T % 4 == 0, B % BF == 0, B % BB === 0 (Tmax and BF and BB are passed by compiler)
 
 #define F4(A, B) ((sycl::float4 *)(A))[(B) >> 2]
 
-inline sycl::queue& getQueue() 
+inline sycl::queue& getQueue()
 {
-  auto device_type = c10::DeviceType::XPU;
-  c10::impl::VirtualGuardImpl impl(device_type);
-  c10::Stream xpu_stream = impl.getStream(impl.getDevice());
-  return xpu::get_queue_from_stream(xpu_stream);
+  return get_global_queue();
 }
 
 /* template <typename F>

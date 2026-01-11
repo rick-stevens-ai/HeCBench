@@ -43,7 +43,7 @@ DOUBLE get_time_eikonal(DOUBLE a, DOUBLE b, DOUBLE c, DOUBLE s)
 SYCL_EXTERNAL
 void run_solver(
   sycl::nd_item<3> &item,
-  const double*__restrict spd,
+  const DOUBLE*__restrict spd,
   const bool*__restrict mask,
   const DOUBLE *__restrict sol_in,
   DOUBLE *__restrict sol_out,
@@ -59,7 +59,7 @@ void run_solver(
     // retrieve actual block index from the active list
     uint block_idx = list[list_idx];
 
-    double F;
+    DOUBLE F;
     bool isValid;
     uint blocksize = BLOCK_LENGTH*BLOCK_LENGTH*BLOCK_LENGTH;
     uint base_addr = block_idx*blocksize;
@@ -92,7 +92,7 @@ void run_solver(
 
     SOL(idx[2],idx[1],idx[0]) = sol_in[base_addr + tIdx];
     F = spd[base_addr + tIdx];
-    if(F > 0) F = 1.0/F; // F = 1/f
+    if(F > 0) F = (DOUBLE)1.0/F; // F = 1/f
     isValid = mask[base_addr + tIdx];
 
     uint new_base_addr, new_tIdx;
@@ -284,7 +284,7 @@ void run_reduction(
 SYCL_EXTERNAL
 void run_check_neighbor(
   sycl::nd_item<3> &item,
-  const double*__restrict spd,
+  const DOUBLE*__restrict spd,
   const bool*__restrict mask,
   const DOUBLE *__restrict sol_in,
   DOUBLE *__restrict sol_out,
@@ -297,7 +297,7 @@ void run_check_neighbor(
 
   if(list_idx < nTotalBlock)
   {
-    double F;
+    DOUBLE F;
     bool isValid;
     //__shared__ DOUBLE _sol[BLOCK_LENGTH+2][BLOCK_LENGTH+2][BLOCK_LENGTH+2];
     sycl::multi_ptr<DOUBLE[BLOCK_LENGTH+2][BLOCK_LENGTH+2][BLOCK_LENGTH+2], \

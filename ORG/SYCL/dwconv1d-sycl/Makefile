@@ -25,7 +25,7 @@ PYTORCH_PATH ?= /usr/local
 
 program = main
 
-source = src/timex.cpp src/timex_op.cpp
+source = src/timex.cpp src/main.cpp
 
 obj = $(source:.cpp=.o)
 
@@ -35,8 +35,6 @@ obj = $(source:.cpp=.o)
 
 # Standard Flags
 CFLAGS := $(EXTRA_CFLAGS) -std=c++17 -Wall -fsycl \
-          -I$(PYTORCH_PATH)/include \
-          -I$(PYTORCH_PATH)/include/torch/csrc/api/include \
           --gcc-toolchain=$(GCC_TOOLCHAIN)
 
 ifeq ($(VENDOR), AdaptiveCpp)
@@ -45,7 +43,7 @@ ifeq ($(VENDOR), AdaptiveCpp)
 endif
 
 # Linker Flags
-LDFLAGS = -L$(PYTORCH_PATH)/lib -ltorch -lc10 -ltorch_cpu
+LDFLAGS =
 
 ifeq ($(CUDA), yes)
   CFLAGS += -fsycl-targets=nvptx64-nvidia-cuda \
@@ -70,6 +68,7 @@ endif
 
 ifeq ($(GPU),yes)
   CFLAGS +=-DUSE_GPU
+  CFLAGS += -fsycl-targets=spir64_gen -Xsycl-target-backend "-device acm-g10"
 endif
 
 # Define BF, BB, Tmax macros (adjust as needed)
