@@ -14,21 +14,21 @@
 
 namespace tantan {
 
-void multiplyAll(std::vector<double> &v, double factor) {
-  for (std::vector<double>::iterator i = v.begin(); i < v.end(); ++i)
+void multiplyAll(std::vector<DOUBLE> &v, DOUBLE factor) {
+  for (std::vector<DOUBLE>::iterator i = v.begin(); i < v.end(); ++i)
     *i *= factor;
 }
 
-double firstRepeatOffsetProb(double probMult, int maxRepeatOffset) {
+DOUBLE firstRepeatOffsetProb(DOUBLE probMult, int maxRepeatOffset) {
   if (probMult < 1 || probMult > 1)
     return (1 - probMult) / (1 - std::pow(probMult, maxRepeatOffset));
   else
     return 1.0 / maxRepeatOffset;
 }
 
-void checkForwardAndBackwardTotals(double fTot, double bTot) {
-  double x = std::abs(fTot);
-  double y = std::abs(bTot);
+void checkForwardAndBackwardTotals(DOUBLE fTot, DOUBLE bTot) {
+  DOUBLE x = std::abs(fTot);
+  DOUBLE y = std::abs(bTot);
 
   // ??? Is 1e6 suitable here ???
   if (std::abs(fTot - bTot) > std::max(x, y) / 1e6)
@@ -48,36 +48,36 @@ struct Tantan {
 
   const const_double_ptr *likelihoodRatioMatrix;
 
-  double b2b;  // transition probability from background to background
-  double f2b;  // transition probability from foreground to background
-  double g2g;  // transition probability from gap/indel to gap/indel
-  //double f2g;  // transition probability from foreground to gap/indel
-  //double g2f;  // transition probability from gap/indel to foreground
-  double oneGapProb;  // f2g * g2f
-  double endGapProb;  // f2g * 1
-  double f2f0;  // foreground to foreground, if there are 0 indel transitions
-  double f2f1;  // foreground to foreground, if there is 1 indel transition
-  double f2f2;  // foreground to foreground, if there are 2 indel transitions
-  double b2fDecay;
-  double b2fGrowth;
-  double b2fFirst;  // background state to first foreground state
-  double b2fLast;  // background state to last foreground state
+  DOUBLE b2b;  // transition probability from background to background
+  DOUBLE f2b;  // transition probability from foreground to background
+  DOUBLE g2g;  // transition probability from gap/indel to gap/indel
+  //DOUBLE f2g;  // transition probability from foreground to gap/indel
+  //DOUBLE g2f;  // transition probability from gap/indel to foreground
+  DOUBLE oneGapProb;  // f2g * g2f
+  DOUBLE endGapProb;  // f2g * 1
+  DOUBLE f2f0;  // foreground to foreground, if there are 0 indel transitions
+  DOUBLE f2f1;  // foreground to foreground, if there is 1 indel transition
+  DOUBLE f2f2;  // foreground to foreground, if there are 2 indel transitions
+  DOUBLE b2fDecay;
+  DOUBLE b2fGrowth;
+  DOUBLE b2fFirst;  // background state to first foreground state
+  DOUBLE b2fLast;  // background state to last foreground state
 
-  double backgroundProb;
-  std::vector<double> foregroundProbs;
-  std::vector<double> insertionProbs;
+  DOUBLE backgroundProb;
+  std::vector<DOUBLE> foregroundProbs;
+  std::vector<DOUBLE> insertionProbs;
 
-  std::vector<double> scaleFactors;
+  std::vector<DOUBLE> scaleFactors;
 
   Tantan(const uchar *seqBeg,
          const uchar *seqEnd,
          int maxRepeatOffset,
          const const_double_ptr *likelihoodRatioMatrix,
-         double repeatProb,
-         double repeatEndProb,
-         double repeatOffsetProbDecay,
-         double firstGapProb,
-         double otherGapProb) {
+         DOUBLE repeatProb,
+         DOUBLE repeatEndProb,
+         DOUBLE repeatOffsetProbDecay,
+         DOUBLE firstGapProb,
+         DOUBLE otherGapProb) {
     assert(maxRepeatOffset > 0);
     assert(repeatProb >= 0 && repeatProb < 1);
     // (if repeatProb==1, then any sequence is impossible)
@@ -122,11 +122,11 @@ struct Tantan {
     std::fill(insertionProbs.begin(), insertionProbs.end(), 0.0);
   }
 
-  double forwardTotal() {
-    double fromForeground = std::accumulate(foregroundProbs.begin(),
+  DOUBLE forwardTotal() {
+    DOUBLE fromForeground = std::accumulate(foregroundProbs.begin(),
                                             foregroundProbs.end(), 0.0);
     fromForeground *= f2b;
-    double total = backgroundProb * b2b + fromForeground;
+    DOUBLE total = backgroundProb * b2b + fromForeground;
     assert(total > 0);
     return total;
   }
@@ -137,24 +137,24 @@ struct Tantan {
     std::fill(insertionProbs.begin(), insertionProbs.end(), 0.0);
   }
 
-  double backwardTotal() {
+  DOUBLE backwardTotal() {
     assert(backgroundProb > 0);
     return backgroundProb;
   }
 
   void calcForwardTransitionProbsWithGaps() {
-    double fromBackground = backgroundProb * b2fLast;
-    double *foregroundPtr = &foregroundProbs.back();
-    double f = *foregroundPtr;
-    double fromForeground = f;
+    DOUBLE fromBackground = backgroundProb * b2fLast;
+    DOUBLE *foregroundPtr = &foregroundProbs.back();
+    DOUBLE f = *foregroundPtr;
+    DOUBLE fromForeground = f;
 
     if (insertionProbs.empty()) {
       *foregroundPtr = fromBackground + f * f2f0;
     } else {
-      double *insertionPtr = &insertionProbs.back();
-      double i = *insertionPtr;
+      DOUBLE *insertionPtr = &insertionProbs.back();
+      DOUBLE i = *insertionPtr;
       *foregroundPtr = fromBackground + f * f2f1 + i * endGapProb;
-      double d = f;
+      DOUBLE d = f;
       --foregroundPtr;
       fromBackground *= b2fGrowth;
 
@@ -181,18 +181,18 @@ struct Tantan {
   }
 
   void calcBackwardTransitionProbsWithGaps() {
-    double toBackground = f2b * backgroundProb;
-    double *foregroundPtr = &foregroundProbs.front();
-    double f = *foregroundPtr;
-    double toForeground = f;
+    DOUBLE toBackground = f2b * backgroundProb;
+    DOUBLE *foregroundPtr = &foregroundProbs.front();
+    DOUBLE f = *foregroundPtr;
+    DOUBLE toForeground = f;
 
     if (insertionProbs.empty()) {
       *foregroundPtr = toBackground + f2f0 * f;
     } else {
-      double *insertionPtr = &insertionProbs.front();
-      double i = *insertionPtr;
+      DOUBLE *insertionPtr = &insertionProbs.front();
+      DOUBLE i = *insertionPtr;
       *foregroundPtr = toBackground + f2f1 * f + i;
-      double d = endGapProb * f;
+      DOUBLE d = endGapProb * f;
       ++foregroundPtr;
       toForeground *= b2fGrowth;
 
@@ -201,7 +201,7 @@ struct Tantan {
         toForeground += f;
         i = *(insertionPtr + 1);
         *foregroundPtr = toBackground + f2f2 * f + (i + d);
-        double oneGapProb_f = oneGapProb * f;
+        DOUBLE oneGapProb_f = oneGapProb * f;
         *insertionPtr = oneGapProb_f + g2g * i;
         d = oneGapProb_f + g2g * d;
         ++foregroundPtr;
@@ -222,14 +222,14 @@ struct Tantan {
   void calcForwardTransitionProbs() {
     if (endGapProb > 0) return calcForwardTransitionProbsWithGaps();
 
-    double fromBackground = backgroundProb * b2fLast;
-    double fromForeground = 0;
-    double *foregroundPtr = END(foregroundProbs);
-    double *foregroundBeg = BEG(foregroundProbs);
+    DOUBLE fromBackground = backgroundProb * b2fLast;
+    DOUBLE fromForeground = 0;
+    DOUBLE *foregroundPtr = END(foregroundProbs);
+    DOUBLE *foregroundBeg = BEG(foregroundProbs);
 
     while (foregroundPtr > foregroundBeg) {
       --foregroundPtr;
-      double f = *foregroundPtr;
+      DOUBLE f = *foregroundPtr;
       fromForeground += f;
       *foregroundPtr = fromBackground + f * f2f0;
       fromBackground *= b2fGrowth;
@@ -242,14 +242,14 @@ struct Tantan {
   void calcBackwardTransitionProbs() {
     if (endGapProb > 0) return calcBackwardTransitionProbsWithGaps();
 
-    double toBackground = f2b * backgroundProb;
-    double toForeground = 0;
-    double *foregroundPtr = BEG(foregroundProbs);
-    double *foregroundEnd = END(foregroundProbs);
+    DOUBLE toBackground = f2b * backgroundProb;
+    DOUBLE toForeground = 0;
+    DOUBLE *foregroundPtr = BEG(foregroundProbs);
+    DOUBLE *foregroundEnd = END(foregroundProbs);
 
     while (foregroundPtr < foregroundEnd) {
       toForeground *= b2fGrowth;
-      double f = *foregroundPtr;
+      DOUBLE f = *foregroundPtr;
       toForeground += f;
       *foregroundPtr = toBackground + f2f0 * f;
       ++foregroundPtr;
@@ -259,22 +259,22 @@ struct Tantan {
     backgroundProb = b2b * backgroundProb + toForeground;
   }
 
-  void addEndCounts(double forwardProb,
-                    double totalProb,
-                    double *transitionCounts) {
-    double toEnd = forwardProb * b2b / totalProb;
+  void addEndCounts(DOUBLE forwardProb,
+                    DOUBLE totalProb,
+                    DOUBLE *transitionCounts) {
+    DOUBLE toEnd = forwardProb * b2b / totalProb;
     transitionCounts[0] += toEnd;
   }
 
-  void addTransitionCounts(double forwardProb,
-                           double totalProb,
-                           double *transitionCounts) {
-    double toBg = forwardProb * b2b / totalProb;
-    double toFg = forwardProb * b2fFirst / totalProb;
+  void addTransitionCounts(DOUBLE forwardProb,
+                           DOUBLE totalProb,
+                           DOUBLE *transitionCounts) {
+    DOUBLE toBg = forwardProb * b2b / totalProb;
+    DOUBLE toFg = forwardProb * b2fFirst / totalProb;
 
     transitionCounts[0] += backgroundProb * toBg;
 
-    for (double *i = BEG(foregroundProbs); i < END(foregroundProbs); ++i) {
+    for (DOUBLE *i = BEG(foregroundProbs); i < END(foregroundProbs); ++i) {
       ++transitionCounts;
       *transitionCounts += *i * toFg;
       toFg *= b2fDecay;
@@ -282,12 +282,12 @@ struct Tantan {
   }
 
   void calcEmissionProbs() {
-    const double *lrRow = likelihoodRatioMatrix[*seqPtr];
+    const DOUBLE *lrRow = likelihoodRatioMatrix[*seqPtr];
 
     bool isNearSeqBeg = (seqPtr - seqBeg < maxRepeatOffset);
     const uchar *seqStop = isNearSeqBeg ? seqBeg : seqPtr - maxRepeatOffset;
 
-    double *foregroundPtr = BEG(foregroundProbs);
+    DOUBLE *foregroundPtr = BEG(foregroundProbs);
     const uchar *offsetPtr = seqPtr;
 
     while (offsetPtr > seqStop) {
@@ -302,7 +302,7 @@ struct Tantan {
     }
   }
 
-  void rescale(double scale) {
+  void rescale(DOUBLE scale) {
     backgroundProb *= scale;
     multiplyAll(foregroundProbs, scale);
     multiplyAll(insertionProbs, scale);
@@ -311,7 +311,7 @@ struct Tantan {
   void rescaleForward() {
     if ((seqPtr - seqBeg) % scaleStepSize == scaleStepSize - 1) {
       assert(backgroundProb > 0);
-      double scale = 1 / backgroundProb;
+      DOUBLE scale = 1 / backgroundProb;
       scaleFactors[(seqPtr - seqBeg) / scaleStepSize] = scale;
       rescale(scale);
     }
@@ -319,7 +319,7 @@ struct Tantan {
 
   void rescaleBackward() {
     if ((seqPtr - seqBeg) % scaleStepSize == scaleStepSize - 1) {
-      double scale = scaleFactors[(seqPtr - seqBeg) / scaleStepSize];
+      DOUBLE scale = scaleFactors[(seqPtr - seqBeg) / scaleStepSize];
       rescale(scale);
     }
   }
@@ -336,14 +336,14 @@ struct Tantan {
       ++seqPtr;
     }
 
-    double z = forwardTotal();
+    DOUBLE z = forwardTotal();
 
     initializeBackwardAlgorithm();
 
     while (seqPtr > seqBeg) {
       --seqPtr;
       --letterProbs;
-      double nonRepeatProb = *letterProbs * backgroundProb / z;
+      DOUBLE nonRepeatProb = *letterProbs * backgroundProb / z;
       // Convert nonRepeatProb to a float, so that it is more likely
       // to be exactly 1 when it should be, e.g. for the 1st letter of
       // a sequence:
@@ -353,11 +353,11 @@ struct Tantan {
       calcBackwardTransitionProbs();
     }
 
-    double z2 = backwardTotal();
+    DOUBLE z2 = backwardTotal();
     checkForwardAndBackwardTotals(z, z2);
   }
 
-  void countTransitions(double *transitionCounts) {
+  void countTransitions(DOUBLE *transitionCounts) {
     std::vector<float> p(seqEnd - seqBeg);
     float *letterProbs = BEG(p);
 
@@ -372,7 +372,7 @@ struct Tantan {
       ++seqPtr;
     }
 
-    double z = forwardTotal();
+    DOUBLE z = forwardTotal();
 
     addEndCounts(backgroundProb, z, transitionCounts);
 
@@ -387,7 +387,7 @@ struct Tantan {
       calcBackwardTransitionProbs();
     }
 
-    double z2 = backwardTotal();
+    DOUBLE z2 = backwardTotal();
     checkForwardAndBackwardTotals(z, z2);
   }
 };
@@ -396,12 +396,12 @@ void maskSequences(uchar *seqBeg,
                    uchar *seqEnd,
                    int maxRepeatOffset,
                    const const_double_ptr *likelihoodRatioMatrix,
-                   double repeatProb,
-                   double repeatEndProb,
-                   double repeatOffsetProbDecay,
-                   double firstGapProb,
-                   double otherGapProb,
-                   double minMaskProb,
+                   DOUBLE repeatProb,
+                   DOUBLE repeatEndProb,
+                   DOUBLE repeatOffsetProbDecay,
+                   DOUBLE firstGapProb,
+                   DOUBLE otherGapProb,
+                   DOUBLE minMaskProb,
                    const uchar *maskTable) {
   std::vector<float> p(seqEnd - seqBeg);
   float *probabilities = BEG(p);
@@ -418,11 +418,11 @@ void getProbabilities(const uchar *seqBeg,
                       const uchar *seqEnd,
                       int maxRepeatOffset,
                       const const_double_ptr *likelihoodRatioMatrix,
-                      double repeatProb,
-                      double repeatEndProb,
-                      double repeatOffsetProbDecay,
-                      double firstGapProb,
-                      double otherGapProb,
+                      DOUBLE repeatProb,
+                      DOUBLE repeatEndProb,
+                      DOUBLE repeatOffsetProbDecay,
+                      DOUBLE firstGapProb,
+                      DOUBLE otherGapProb,
                       float *probabilities) {
   Tantan tantan(seqBeg, seqEnd, maxRepeatOffset, likelihoodRatioMatrix,
                 repeatProb, repeatEndProb, repeatOffsetProbDecay,
@@ -433,7 +433,7 @@ void getProbabilities(const uchar *seqBeg,
 void maskProbableLetters(uchar *seqBeg,
                          uchar *seqEnd,
                          const float *probabilities,
-                         double minMaskProb,
+                         DOUBLE minMaskProb,
                          const uchar *maskTable) {
   while (seqBeg < seqEnd) {
     if (*probabilities >= minMaskProb)
@@ -447,12 +447,12 @@ void countTransitions(const uchar *seqBeg,
                       const uchar *seqEnd,
                       int maxRepeatOffset,
                       const const_double_ptr *likelihoodRatioMatrix,
-                      double repeatProb,
-                      double repeatEndProb,
-                      double repeatOffsetProbDecay,
-                      double firstGapProb,
-                      double otherGapProb,
-                      double *transitionCounts) {
+                      DOUBLE repeatProb,
+                      DOUBLE repeatEndProb,
+                      DOUBLE repeatOffsetProbDecay,
+                      DOUBLE firstGapProb,
+                      DOUBLE otherGapProb,
+                      DOUBLE *transitionCounts) {
   Tantan tantan(seqBeg, seqEnd, maxRepeatOffset, likelihoodRatioMatrix,
                 repeatProb, repeatEndProb, repeatOffsetProbDecay,
                 firstGapProb, otherGapProb);

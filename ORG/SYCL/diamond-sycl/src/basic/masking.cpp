@@ -21,9 +21,9 @@
 
 
 #define SEQ_LEN 33
-inline double firstRepeatOffsetProb(const double probMult, const int maxRepeatOffset) {
+inline DOUBLE firstRepeatOffsetProb(const DOUBLE probMult, const int maxRepeatOffset) {
   if (probMult < 1 || probMult > 1)
-    return (1 - probMult) / (1 - sycl::pow(probMult, (double)maxRepeatOffset));
+    return (1 - probMult) / (1 - sycl::pow(probMult, (DOUBLE)maxRepeatOffset));
   else
     return 1.0 / maxRepeatOffset;
 }
@@ -33,7 +33,7 @@ void maskProbableLetters(const int size,
     const float *probabilities, 
     const unsigned char *maskTable) {
 
-  const double minMaskProb = 0.5;
+  const DOUBLE minMaskProb = 0.5;
   for (int i=0; i<size; i++)
     if (probabilities[i] >= minMaskProb)
       seqBeg[i] = maskTable[seqBeg[i]];
@@ -43,18 +43,18 @@ int calcRepeatProbs(float *letterProbs,
     const unsigned char *seqBeg, 
     const int size, 
     const int maxRepeatOffset,
-    const double *likelihoodRatioMatrix, // 64 by 64 matrix,
-    const double b2b,
-    const double f2f0,
-    const double f2b,
-    const double b2fLast_inv,
-    const double *pow_lkp,
-    double *foregroundProbs,
+    const DOUBLE *likelihoodRatioMatrix, // 64 by 64 matrix,
+    const DOUBLE b2b,
+    const DOUBLE f2f0,
+    const DOUBLE f2b,
+    const DOUBLE b2fLast_inv,
+    const DOUBLE *pow_lkp,
+    DOUBLE *foregroundProbs,
     const int scaleStepSize,
-    double *scaleFactors)		      	
+    DOUBLE *scaleFactors)		      	
 {
 
-  double backgroundProb = 1.0;
+  DOUBLE backgroundProb = 1.0;
   for (int k=0; k < size ; k++) {
 
     const int v0 = seqBeg[k];
@@ -64,7 +64,7 @@ int calcRepeatProbs(float *letterProbs,
     const int pad2 = maxRepeatOffset - k_cap; // maxRepeatOffset - k, then 0                   when k > maxRepeatOffset
     const int pad3 = k - k_cap;               // 0                  , then maxRepeatOffset - k when k > maxRepeatOffset
 
-    double accu = 0;
+    DOUBLE accu = 0;
 
     for (int i = 0; i < k; i++) {
 
@@ -82,7 +82,7 @@ int calcRepeatProbs(float *letterProbs,
     backgroundProb = (backgroundProb * b2b) + (accu * f2b);
 
     if (k % scaleStepSize == scaleStepSize - 1) {
-      const double scale = 1 / backgroundProb;
+      const DOUBLE scale = 1 / backgroundProb;
       scaleFactors[k / scaleStepSize] = scale;
 
       for (int i=0; i< k_cap; i++)
@@ -94,27 +94,27 @@ int calcRepeatProbs(float *letterProbs,
     letterProbs[k] = (float)(backgroundProb);
   }
 
-  double accu = 0;
+  DOUBLE accu = 0;
   for (int i=0 ; i < maxRepeatOffset; i++) {
     accu += foregroundProbs[i];
     foregroundProbs[i] = f2b;
   }
 
-  const double fTot = backgroundProb * b2b + accu * f2b;
+  const DOUBLE fTot = backgroundProb * b2b + accu * f2b;
   backgroundProb = b2b;
 
-  const double fTot_inv = 1/ fTot ;
+  const DOUBLE fTot_inv = 1/ fTot ;
   for (int k=(size-1) ; k >= 0 ; k--){
 
 
-    double nonRepeatProb = letterProbs[k] * backgroundProb * fTot_inv;
+    DOUBLE nonRepeatProb = letterProbs[k] * backgroundProb * fTot_inv;
     letterProbs[k] = 1 - (float)(nonRepeatProb);
 
     //const int k_cap  = std::min(k, maxRepeatOffset);
     const int k_cap = k < maxRepeatOffset ? k : maxRepeatOffset;
 
     if (k % scaleStepSize == scaleStepSize - 1) {
-      const double scale = scaleFactors[k/ scaleStepSize];
+      const DOUBLE scale = scaleFactors[k/ scaleStepSize];
 
       for (int i=0; i< k_cap; i++)
         foregroundProbs[i] = foregroundProbs[i] * scale;
@@ -122,25 +122,25 @@ int calcRepeatProbs(float *letterProbs,
       backgroundProb *= scale;
     }
 
-    const double c0 = f2b * backgroundProb;
+    const DOUBLE c0 = f2b * backgroundProb;
     const int v0= seqBeg[k];
 
-    double accu = 0;
+    DOUBLE accu = 0;
     for (int i = 0; i < k_cap; i++) {
 
 
       const int v1 =  seqBeg[k-(i+1)];
-      const double f = foregroundProbs[i] * likelihoodRatioMatrix[v0*size+v1];
+      const DOUBLE f = foregroundProbs[i] * likelihoodRatioMatrix[v0*size+v1];
 
       accu += pow_lkp[k_cap-(i+1)]*f;
       foregroundProbs[i] = c0 + f2f0 * f;
     }
 
-    const double p = k > maxRepeatOffset ? 1. : pow_lkp[maxRepeatOffset - k]*b2fLast_inv;
+    const DOUBLE p = k > maxRepeatOffset ? 1. : pow_lkp[maxRepeatOffset - k]*b2fLast_inv;
     backgroundProb = (b2b * backgroundProb) + accu*p;
   }
 
-  const double bTot = backgroundProb;
+  const DOUBLE bTot = backgroundProb;
   return (sycl::fabs(fTot - bTot) > sycl::fmax(fTot, bTot) / 1e6);
 }
 
@@ -150,7 +150,7 @@ const uint8_t Masking::bit_mask = 128;
 
 Masking::Masking(const Score_matrix &score_matrix)
 {
-  const double lambda = score_matrix.lambda(); // 0.324032
+  const DOUBLE lambda = score_matrix.lambda(); // 0.324032
   for (unsigned i = 0; i < size; ++i) {
     mask_table_x_[i] = value_traits.mask_char;
     mask_table_bit_[i] = (uint8_t)i | bit_mask;
@@ -193,8 +193,8 @@ unsigned char* Masking::call_opt(Sequence_set &seqs) const
     p += seqs.length(i);
   }
 
-  double *probMat_device = NULL;
-  posix_memalign((void**)&probMat_device, 1024, size*size*sizeof(double));
+  DOUBLE *probMat_device = NULL;
+  posix_memalign((void**)&probMat_device, 1024, size*size*sizeof(DOUBLE));
   for (int i = 0; i < size; i++)
     for (int j = 0; j < size; j++)
       probMat_device[i*size+j] = probMatrixPointers_[i][j];
@@ -224,16 +224,16 @@ unsigned char* Masking::call_opt(Sequence_set &seqs) const
 
     const int size = len;
     const int maxRepeatOffset = 50;
-    const double repeatProb = 0.005; 
-    const double repeatEndProb = 0.05;
-    const double repeatOffsetProbDecay = 0.9;
-    const double firstGapProb = 0; 
-    const double otherGapProb = 0;
-    const double minMaskProb = 0.5; 
+    const DOUBLE repeatProb = 0.005; 
+    const DOUBLE repeatEndProb = 0.05;
+    const DOUBLE repeatOffsetProbDecay = 0.9;
+    const DOUBLE firstGapProb = 0; 
+    const DOUBLE otherGapProb = 0;
+    const DOUBLE minMaskProb = 0.5; 
     const int seqs_len = n;
 
     buffer<unsigned char,1> d_seqs (seqs_device, total);
-    buffer<double,1> d_probMat (probMat_device, size*size);
+    buffer<DOUBLE,1> d_probMat (probMat_device, size*size);
     buffer<unsigned char,1> d_mask_table (mask_table_device, size);
     q.submit([&](handler &h) {
         auto seqs = d_seqs.get_access<sycl::access_mode::read_write>(h);
@@ -247,17 +247,17 @@ unsigned char* Masking::call_opt(Sequence_set &seqs) const
 
           float probabilities[SEQ_LEN];
 
-          const double b2b = 1 - repeatProb;
-          const double f2f0 = 1 - repeatEndProb;
-          const double f2b = repeatEndProb;
+          const DOUBLE b2b = 1 - repeatProb;
+          const DOUBLE f2f0 = 1 - repeatEndProb;
+          const DOUBLE f2b = repeatEndProb;
 
-          const double b2fGrowth = 1 / repeatOffsetProbDecay;
+          const DOUBLE b2fGrowth = 1 / repeatOffsetProbDecay;
 
-          const double  b2fLast = repeatProb * firstRepeatOffsetProb(b2fGrowth, maxRepeatOffset);
-          const double b2fLast_inv = 1 / b2fLast ;
+          const DOUBLE  b2fLast = repeatProb * firstRepeatOffsetProb(b2fGrowth, maxRepeatOffset);
+          const DOUBLE b2fLast_inv = 1 / b2fLast ;
 
-          double p = b2fLast;
-          double ar_1[50];
+          DOUBLE p = b2fLast;
+          DOUBLE ar_1[50];
 
           for (int i=0 ; i < maxRepeatOffset; i++){
             ar_1[i] = p ;
@@ -266,9 +266,9 @@ unsigned char* Masking::call_opt(Sequence_set &seqs) const
 
           const int scaleStepSize = 16;
 
-          double scaleFactors[SEQ_LEN / scaleStepSize];
+          DOUBLE scaleFactors[SEQ_LEN / scaleStepSize];
 
-          double foregroundProbs[50];
+          DOUBLE foregroundProbs[50];
 
           for (int i=0 ; i < maxRepeatOffset; i++){
             foregroundProbs[i] = 0;

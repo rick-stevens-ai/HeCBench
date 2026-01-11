@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <memory>
 #include <math.h>
+#include "types.h"
 #include "value.h"
 #include "score_matrix.h"
 #include "../basic/sequence.h"
@@ -46,7 +47,7 @@ struct Masking
 	static const uint8_t bit_mask;
 private:
 	enum { size = 64 };
-	double likelihoodRatioMatrix_[size][size], *probMatrixPointers_[size], firstGapProb_, otherGapProb_;
+	DOUBLE likelihoodRatioMatrix_[size][size], *probMatrixPointers_[size], firstGapProb_, otherGapProb_;
 	char mask_table_x_[size], mask_table_bit_[size];
 };
 

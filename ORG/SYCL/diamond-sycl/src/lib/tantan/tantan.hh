@@ -51,21 +51,23 @@
 #ifndef TANTAN_HH
 #define TANTAN_HH
 
+#include "../../basic/types.h"
+
 namespace tantan {
 
 typedef unsigned char uchar;
-typedef const double *const_double_ptr;
+typedef const DOUBLE *const_double_ptr;
 
 void maskSequences(uchar *seqBeg,
                    uchar *seqEnd,
                    int maxRepeatOffset,
                    const const_double_ptr *likelihoodRatioMatrix,
-                   double repeatProb,
-                   double repeatEndProb,
-                   double repeatOffsetProbDecay,
-                   double firstGapProb,
-                   double otherGapProb,
-                   double minMaskProb,
+                   DOUBLE repeatProb,
+                   DOUBLE repeatEndProb,
+                   DOUBLE repeatOffsetProbDecay,
+                   DOUBLE firstGapProb,
+                   DOUBLE otherGapProb,
+                   DOUBLE minMaskProb,
                    const uchar *maskTable);
 
 // The following routine gets the posterior probability that each
@@ -76,11 +78,11 @@ void getProbabilities(const uchar *seqBeg,
                       const uchar *seqEnd,
                       int maxRepeatOffset,
                       const const_double_ptr *likelihoodRatioMatrix,
-                      double repeatProb,
-                      double repeatEndProb,
-                      double repeatOffsetProbDecay,
-                      double firstGapProb,
-                      double otherGapProb,
+                      DOUBLE repeatProb,
+                      DOUBLE repeatEndProb,
+                      DOUBLE repeatOffsetProbDecay,
+                      DOUBLE firstGapProb,
+                      DOUBLE otherGapProb,
                       float *probabilities);
 
 // The following routine masks each letter whose corresponding entry
@@ -89,7 +91,7 @@ void getProbabilities(const uchar *seqBeg,
 void maskProbableLetters(uchar *seqBeg,
                          uchar *seqEnd,
                          const float *probabilities,
-                         double minMaskProb,
+                         DOUBLE minMaskProb,
                          const uchar *maskTable);
 
 // The following routine counts the expected number of transitions
@@ -108,12 +110,12 @@ void countTransitions(const uchar *seqBeg,
                       const uchar *seqEnd,
                       int maxRepeatOffset,
                       const const_double_ptr *likelihoodRatioMatrix,
-                      double repeatProb,
-                      double repeatEndProb,
-                      double repeatOffsetProbDecay,
-                      double firstGapProb,
-                      double otherGapProb,
-                      double *transitionCounts);
+                      DOUBLE repeatProb,
+                      DOUBLE repeatEndProb,
+                      DOUBLE repeatOffsetProbDecay,
+                      DOUBLE firstGapProb,
+                      DOUBLE otherGapProb,
+                      DOUBLE *transitionCounts);
 
 }
 

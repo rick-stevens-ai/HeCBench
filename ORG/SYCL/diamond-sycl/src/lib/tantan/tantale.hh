@@ -51,21 +51,23 @@
 #ifndef TANTALE_HH
 #define TANTALE_HH
 
+#include "../../basic/types.h"
+
 namespace tantale {
 
 typedef unsigned char uchar;
-typedef const double *const_double_ptr;
+typedef const DOUBLE *const_double_ptr;
 
 void maskSequences(uchar *seqBeg,
                    uchar *seqEnd,
                    int maxRepeatOffset,
                    const const_double_ptr *likelihoodRatioMatrix,
-                   double repeatProb,
-                   double repeatEndProb,
-                   double repeatOffsetProbDecay,
-                   double firstGapProb,
-                   double otherGapProb,
-                   double minMaskProb,
+                   DOUBLE repeatProb,
+                   DOUBLE repeatEndProb,
+                   DOUBLE repeatOffsetProbDecay,
+                   DOUBLE firstGapProb,
+                   DOUBLE otherGapProb,
+                   DOUBLE minMaskProb,
 		   const uchar *maskTable);
 
 // The following routine masks each letter whose corresponding entry

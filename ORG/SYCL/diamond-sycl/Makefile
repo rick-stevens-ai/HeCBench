@@ -133,7 +133,7 @@ ifeq ($(INTEL_GPU), yes)
   CFLAGS += -fsycl-targets=spir64_gen -Xsycl-target-backend "-device acm-g10"
 endif
 ifeq ($(GPU),yes)
-  CFLAGS +=-DUSE_GPU
+  CFLAGS +=-DUSE_GPU -DUSE_FLOAT
 endif
 #===============================================================================
 # Targets to Build
